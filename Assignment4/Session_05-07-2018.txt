@@ -1,0 +1,541 @@
+[TE1@localhost ~]$ mysql -h 10.10.14.107 -u te3166 -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 64
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> show tables;
++-----------------------+
+| Tables_in_te3166db    |
++-----------------------+
+| bandFrom90s           |
+| bandsWith4Members     |
+| bandsWithFourMembers  |
+| customer_base         |
+| emp_from_csv_trial    |
+| employee_data         |
+| femaleCustomerDetails |
+| inventory             |
+| myFavSongs            |
+| new_trial             |
+| products              |
++-----------------------+
+11 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from bandFrom90s
+    -> ;
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+| band_id | band_name              | num_of_members | bestAlbum                        | concept_year | country_from |
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+|       1 | Linkin Park            |              6 | Hybrid Theory                    |         1997 | US           |
+|       2 | Coldplay               |              4 | X&Y                              |         1997 | England      |
+|       3 | Green Day              |              3 | Nimrod                           |         1995 | US           |
+|       4 | Nirvana                |              4 | Nirvana                          |         1986 | US           |
+|       5 | Red Hot Chilli Peppers |              4 | Californication                  |         1983 | US           |
+|       6 | Radiohead              |              5 | The Bends                        |         1985 | England      |
+|       7 | Foo Fighters           |              4 | The Color and the Shape          |         1994 | US           |
+|       8 | Metallica              |              4 | Metallica                        |         1991 | US           |
+|       9 | System of a Down       |              4 | Toxicity                         |         1984 | US           |
+|      10 | Oasis                  |              5 | (What's the Song) Morning Glory? |         1991 | England      |
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from myFavSongs
+    -> ;
++---------+-----------------+------------------------+------+
+| song_id | songName        | band_name              | year |
++---------+-----------------+------------------------+------+
+|     600 | Paradise        | Coldplay               | 2007 |
+|     601 | Everlong        | Foo Fighters           | 1998 |
+|     602 | In the End      | Linkin Park            | 2003 |
+|     603 | Californication | Red Hot Chilli Peppers | 2002 |
+|     604 | Unforgiven      | Metallica              | 1991 |
++---------+-----------------+------------------------+------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s natural join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; 
++------------------------+--------------+
+| band_name              | concept_year |
++------------------------+--------------+
+| Linkin Park            |         1997 |
+| Coldplay               |         1997 |
+| Red Hot Chilli Peppers |         1983 |
+| Foo Fighters           |         1994 |
+| Metallica              |         1991 |
++------------------------+--------------+
+5 rows in set (0.01 sec)
+
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s,songName from myFavSongs natural join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; 
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from myFavSongs natural join myFavSongs where myFavSongs.band_name=bandFrom90s.b' at line 1
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s natural join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name and (selectsongName from myFavSongs); 
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from myFavSongs)' at line 1
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s natural join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name and in (selectsongName from myFavSongs); 
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in (selectsongName from myFavSongs)' at line 1
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s natural join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; +------------------------+--------------+
+| band_name              | concept_year |
++------------------------+--------------+
+| Linkin Park            |         1997 |
+| Coldplay               |         1997 |
+| Red Hot Chilli Peppers |         1983 |
+| Foo Fighters           |         1994 |
+| Metallica              |         1991 |
++------------------------+--------------+
+5 rows in set (0.01 sec)
+
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s; 
++------------------------+--------------+
+| band_name              | concept_year |
++------------------------+--------------+
+| Linkin Park            |         1997 |
+| Coldplay               |         1997 |
+| Green Day              |         1995 |
+| Nirvana                |         1986 |
+| Red Hot Chilli Peppers |         1983 |
+| Radiohead              |         1985 |
+| Foo Fighters           |         1994 |
+| Metallica              |         1991 |
+| System of a Down       |         1984 |
+| Oasis                  |         1991 |
++------------------------+--------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s, songName from myFavSongs; 
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from myFavSongs' at line 1
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; 
+ERROR 1052 (23000): Column 'band_name' in field list is ambiguous
+MySQL [te3166db]> select band_name, concept_year from bandFrom90s inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; 
+ERROR 1052 (23000): Column 'band_name' in field list is ambiguous
+MySQL [te3166db]> select bandFrom90s.band_name, concept_year from bandFrom90s inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name;  
++------------------------+--------------+
+| band_name              | concept_year |
++------------------------+--------------+
+| Linkin Park            |         1997 |
+| Coldplay               |         1997 |
+| Red Hot Chilli Peppers |         1983 |
+| Foo Fighters           |         1994 |
+| Metallica              |         1991 |
++------------------------+--------------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> select myFavSongs.songName,bandFrom90s.band_name, concept_year from bandFrom90s inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; 
++-----------------+------------------------+--------------+
+| songName        | band_name              | concept_year |
++-----------------+------------------------+--------------+
+| In the End      | Linkin Park            |         1997 |
+| Paradise        | Coldplay               |         1997 |
+| Californication | Red Hot Chilli Peppers |         1983 |
+| Everlong        | Foo Fighters           |         1994 |
+| Unforgiven      | Metallica              |         1991 |
++-----------------+------------------------+--------------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> select myFavSongs.songName,bandFrom90s.band_name, bandFrom90s.concept_year inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; 
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name' at line 1
+MySQL [te3166db]> select myFavSongs.songName,bandFrom90s.band_name, bandFrom90s.concept_year from bandFrom90s inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; 
++-----------------+------------------------+--------------+
+| songName        | band_name              | concept_year |
++-----------------+------------------------+--------------+
+| In the End      | Linkin Park            |         1997 |
+| Paradise        | Coldplay               |         1997 |
+| Californication | Red Hot Chilli Peppers |         1983 |
+| Everlong        | Foo Fighters           |         1994 |
+| Unforgiven      | Metallica              |         1991 |
++-----------------+------------------------+--------------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> select myFavSongs.year,myFavSongs.songName,bandFrom90s.band_name, bandFrom90s.concept_year from bandFrom90s inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; 
++------+-----------------+------------------------+--------------+
+| year | songName        | band_name              | concept_year |
++------+-----------------+------------------------+--------------+
+| 2003 | In the End      | Linkin Park            |         1997 |
+| 2007 | Paradise        | Coldplay               |         1997 |
+| 2002 | Californication | Red Hot Chilli Peppers |         1983 |
+| 1998 | Everlong        | Foo Fighters           |         1994 |
+| 1991 | Unforgiven      | Metallica              |         1991 |
++------+-----------------+------------------------+--------------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> select myFavSongs.year,myFavSongs.songName,bandFrom90s.band_name, bandFrom90s.concept_year from bandFrom90s inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name; select bandFrom90s.band_name, bandFrom90s.concept_year, myFavSongs.songName, myFavSongs.year from bandFrom90s inner join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name;
++------+-----------------+------------------------+--------------+
+| year | songName        | band_name              | concept_year |
++------+-----------------+------------------------+--------------+
+| 2003 | In the End      | Linkin Park            |         1997 |
+| 2007 | Paradise        | Coldplay               |         1997 |
+| 2002 | Californication | Red Hot Chilli Peppers |         1983 |
+| 1998 | Everlong        | Foo Fighters           |         1994 |
+| 1991 | Unforgiven      | Metallica              |         1991 |
++------+-----------------+------------------------+--------------+
+5 rows in set (0.00 sec)
+
++------------------------+--------------+-----------------+------+
+| band_name              | concept_year | songName        | year |
++------------------------+--------------+-----------------+------+
+| Linkin Park            |         1997 | In the End      | 2003 |
+| Coldplay               |         1997 | Paradise        | 2007 |
+| Red Hot Chilli Peppers |         1983 | Californication | 2002 |
+| Foo Fighters           |         1994 | Everlong        | 1998 |
+| Metallica              |         1991 | Unforgiven      | 1991 |
++------------------------+--------------+-----------------+------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> 
+
+
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.concept_year, myFavSongs.songName, myFavSongs.year from bandFrom90s right join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where myFavSongs.band_name=bandFrom90s.band_name' at line 1
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.concept_year, myFavSongs.songName, myFavSongs.year from bandFrom90s right join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where myFavSongs.band_name=bandFrom90s.band_name' at line 1
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.concept_year, myFavSongs.songName, myFavSongs.year from bandFrom90s left join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where myFavSongs.band_name=bandFrom90s.band_name' at line 1
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.concept_year, myFavSongs.songName, myFavSongs.year from bandFrom90s join myFavSongs where myFavSongs.band_name=bandFrom90s.band_name;
++------------------------+--------------+-----------------+------+
+| band_name              | concept_year | songName        | year |
++------------------------+--------------+-----------------+------+
+| Linkin Park            |         1997 | In the End      | 2003 |
+| Coldplay               |         1997 | Paradise        | 2007 |
+| Red Hot Chilli Peppers |         1983 | Californication | 2002 |
+| Foo Fighters           |         1994 | Everlong        | 1998 |
+| Metallica              |         1991 | Unforgiven      | 1991 |
++------------------------+--------------+-----------------+------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> 
+
+
+
+
+
+
+
+
+
+
+
+MySQL [te3166db]> create table movieDirectors (id smallint not null primary key auto_increment, name varchar(255) not null, bestMovie varchar (255) not null, yearOfRelease int not null);
+Query OK, 0 rows affected (0.10 sec)
+
+MySQL [te3166db]> create unique index directorIndex on movieDirectors(name); 
+Query OK, 0 rows affected (0.18 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MySQL [te3166db]> show tables;
++-----------------------+
+| Tables_in_te3166db    |
++-----------------------+
+| bandFrom90s           |
+| bandsWith4Members     |
+| bandsWithFourMembers  |
+| customer_base         |
+| emp_from_csv_trial    |
+| employee_data         |
+| femaleCustomerDetails |
+| inventory             |
+| movieDirectors        |
+| myFavSongs            |
+| new_trial             |
+| products              |
++-----------------------+
+12 rows in set (0.00 sec)
+
+MySQL [te3166db]> 
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('David Fincher', 'The Fight Club', 1998);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Martin Scorcese', 'Taxi Driver', 1976);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Christopher Nolan', 'Inception', 2010);
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Damien Chizzelle', 'La La Land', 2016);
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Quentin Tarantino', 'Django Unchained', 2012);
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Alfred Hitchcock', 'Vertigo', 1958);
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Steven Spielberg', 'Jaws', 1975);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Stanley Kubrick', '2001: Space Odessey', 1967);
+Query OK, 1 row affected (0.06 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Satyajit Ray', 'Pather Panchali', 1961);
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into movieDirectors (name, bestMovie, yearOfRelease) values ('Kathryn Bigelow', 'The Hurt Locker', 2008);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> select * from movieDirectors;
++----+-------------------+---------------------+---------------+
+| id | name              | bestMovie           | yearOfRelease |
++----+-------------------+---------------------+---------------+
+|  1 | David Fincher     | The Fight Club      |          1998 |
+|  2 | Martin Scorcese   | Taxi Driver         |          1976 |
+|  3 | Christopher Nolan | Inception           |          2010 |
+|  4 | Damien Chizzelle  | La La Land          |          2016 |
+|  5 | Quentin Tarantino | Django Unchained    |          2012 |
+|  6 | Alfred Hitchcock  | Vertigo             |          1958 |
+|  7 | Steven Spielberg  | Jaws                |          1975 |
+|  8 | Stanley Kubrick   | 2001: Space Odessey |          1967 |
+|  9 | Satyajit Ray      | Pather Panchali     |          1961 |
+| 10 | Kathryn Bigelow   | The Hurt Locker     |          2008 |
++----+-------------------+---------------------+---------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> create unique index bestMoviesDirectorNames on movieDirectors (name);
+Query OK, 0 rows affected (0.15 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MySQL [te3166db]> create table listOfActors (actid smallint not null primary key auto_increment, actName varchar(255) not null, bestMovie varchar(255) not null);
+Query OK, 0 rows affected (0.11 sec)
+
+MySQL [te3166db]> insert into listOfActors (actName, bestMovie) values ('Brad Pitt', 'The Curious Case of Benjamin Button');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into listOfActors (actname, bestMovie) values ('Leonardo di Caprio', 'The Wolf of Wall Street');
+Query OK, 1 row affected (0.07 sec)
+
+MySQL [te3166db]> insert into listOfActors (actname, bestMovie) values ('Jeremy Renner', 'The Hurt Locker');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into listOfActors (actname, bestMovie) values ('Edward Norton', 'The Fight Club');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into listOfActors (actname, bestMovie) values ('Robert de Niro', 'The Taxi Driver');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into listOfActors (actname, bestMovie) values ('Uma Thurman', 'Kill Bill');
+Query OK, 1 row affected (0.10 sec)
+
+MySQL [te3166db]> insert into listOfActors (actname, bestMovie) values ('Alicia Vikander', 'Tomb Raider');
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> select * from listOfActors
+    -> ;
++-------+--------------------+-------------------------------------+
+| actid | actName            | bestMovie                           |
++-------+--------------------+-------------------------------------+
+|     1 | Brad Pitt          | The Curious Case of Benjamin Button |
+|     2 | Leonardo di Caprio | The Wolf of Wall Street             |
+|     3 | Jeremy Renner      | The Hurt Locker                     |
+|     4 | Edward Norton      | The Fight Club                      |
+|     5 | Robert de Niro     | The Taxi Driver                     |
+|     6 | Uma Thurman        | Kill Bill                           |
+|     7 | Alicia Vikander    | Tomb Raider                         |
++-------+--------------------+-------------------------------------+
+7 rows in set (0.00 sec)
+
+MySQL [te3166db]> create table oscarWinners (osc_id smallint not null primary key auto_increment, movieName varchar(255) not null, name varchar(255) not null, yearWon int not null);
+Query OK, 0 rows affected (0.10 sec)
+
+MySQL [te3166db]> insert into oscarWinners (movieName, name, yearWon) values ('Schindler\'s List', 'Steven Spielberg', 1993);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into oscarWinners (movieName, name, yearWon) values ('The Hurt Locker', 'Kathryn Bigelow', 2008);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into oscarWinners (movieName, name, yearWon) values ('The Departed', 'Martin Scorcese', 2006);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into oscarWinners (movieName, name, yearWon) values ('La La land', 'Damien Chazelle', 2016);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into oscarWinners (movieName, name, yearWon) values ('Annie Hall', 'Woody Allen', 1979);
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> select * from oscarWinners
+    -> ;
++--------+------------------+------------------+---------+
+| osc_id | movieName        | name             | yearWon |
++--------+------------------+------------------+---------+
+|      1 | Schindler's List | Steven Spielberg |    1993 |
+|      2 | The Hurt Locker  | Kathryn Bigelow  |    2008 |
+|      3 | The Departed     | Martin Scorcese  |    2006 |
+|      4 | La La land       | Damien Chazelle  |    2016 |
+|      5 | Annie Hall       | Woody Allen      |    1979 |
++--------+------------------+------------------+---------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> update movieDirectors name='Damien Chazelle' where id=4;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '='Damien Chazelle' where id=4' at line 1
+MySQL [te3166db]> update movieDirectors set name='Damien Chazelle' where id=4;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update movieDirectors set name='Martin Scorsese' where id=2;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update oscarWinners set name='Martin Scorsese' where osc_id=3;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors right join oscarWinners where movieDirectors.name=oscarWinners.name; 
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where movieDirectors.name=oscarWinners.name' at line 1
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors right join oscarWinners on  movieDirectors.name=oscarWinners.name; 
++------------------+------------------+-----------------+---------------+
+| name             | name             | bestMovie       | yearOfRelease |
++------------------+------------------+-----------------+---------------+
+| Steven Spielberg | Steven Spielberg | Jaws            |          1975 |
+| Kathryn Bigelow  | Kathryn Bigelow  | The Hurt Locker |          2008 |
+| Martin Scorsese  | Martin Scorsese  | Taxi Driver     |          1976 |
+| Damien Chazelle  | Damien Chazelle  | La La Land      |          2016 |
+| NULL             | Woody Allen      | NULL            |          NULL |
++------------------+------------------+-----------------+---------------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors natural join oscarWinners on  movieDirectors.name=oscarWinners.name; 
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'on  movieDirectors.name=oscarWinners.name' at line 1
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors join oscarWinners on  movieDirectors.name=oscarWinners.name; 
++------------------+------------------+-----------------+---------------+
+| name             | name             | bestMovie       | yearOfRelease |
++------------------+------------------+-----------------+---------------+
+| Steven Spielberg | Steven Spielberg | Jaws            |          1975 |
+| Kathryn Bigelow  | Kathryn Bigelow  | The Hurt Locker |          2008 |
+| Martin Scorsese  | Martin Scorsese  | Taxi Driver     |          1976 |
+| Damien Chazelle  | Damien Chazelle  | La La Land      |          2016 |
++------------------+------------------+-----------------+---------------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors left join oscarWinners on  movieDirectors.name=oscarWinners.name; 
++-------------------+------------------+---------------------+---------------+
+| name              | name             | bestMovie           | yearOfRelease |
++-------------------+------------------+---------------------+---------------+
+| David Fincher     | NULL             | The Fight Club      |          1998 |
+| Martin Scorsese   | Martin Scorsese  | Taxi Driver         |          1976 |
+| Christopher Nolan | NULL             | Inception           |          2010 |
+| Damien Chazelle   | Damien Chazelle  | La La Land          |          2016 |
+| Quentin Tarantino | NULL             | Django Unchained    |          2012 |
+| Alfred Hitchcock  | NULL             | Vertigo             |          1958 |
+| Steven Spielberg  | Steven Spielberg | Jaws                |          1975 |
+| Stanley Kubrick   | NULL             | 2001: Space Odessey |          1967 |
+| Satyajit Ray      | NULL             | Pather Panchali     |          1961 |
+| Kathryn Bigelow   | Kathryn Bigelow  | The Hurt Locker     |          2008 |
++-------------------+------------------+---------------------+---------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors left join oscarWinners on  movieDirectors.name=oscarWinners.name is null; 
++-------------------+------+---------------------+---------------+
+| name              | name | bestMovie           | yearOfRelease |
++-------------------+------+---------------------+---------------+
+| David Fincher     | NULL | The Fight Club      |          1998 |
+| Martin Scorsese   | NULL | Taxi Driver         |          1976 |
+| Christopher Nolan | NULL | Inception           |          2010 |
+| Damien Chazelle   | NULL | La La Land          |          2016 |
+| Quentin Tarantino | NULL | Django Unchained    |          2012 |
+| Alfred Hitchcock  | NULL | Vertigo             |          1958 |
+| Steven Spielberg  | NULL | Jaws                |          1975 |
+| Stanley Kubrick   | NULL | 2001: Space Odessey |          1967 |
+| Satyajit Ray      | NULL | Pather Panchali     |          1961 |
+| Kathryn Bigelow   | NULL | The Hurt Locker     |          2008 |
++-------------------+------+---------------------+---------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors left join oscarWinners on  movieDirectors.name=oscarWinners.name is not null; 
++-------------------+------------------+---------------------+---------------+
+| name              | name             | bestMovie           | yearOfRelease |
++-------------------+------------------+---------------------+---------------+
+| David Fincher     | Steven Spielberg | The Fight Club      |          1998 |
+| David Fincher     | Kathryn Bigelow  | The Fight Club      |          1998 |
+| David Fincher     | Martin Scorsese  | The Fight Club      |          1998 |
+| David Fincher     | Damien Chazelle  | The Fight Club      |          1998 |
+| David Fincher     | Woody Allen      | The Fight Club      |          1998 |
+| Martin Scorsese   | Steven Spielberg | Taxi Driver         |          1976 |
+| Martin Scorsese   | Kathryn Bigelow  | Taxi Driver         |          1976 |
+| Martin Scorsese   | Martin Scorsese  | Taxi Driver         |          1976 |
+| Martin Scorsese   | Damien Chazelle  | Taxi Driver         |          1976 |
+| Martin Scorsese   | Woody Allen      | Taxi Driver         |          1976 |
+| Christopher Nolan | Steven Spielberg | Inception           |          2010 |
+| Christopher Nolan | Kathryn Bigelow  | Inception           |          2010 |
+| Christopher Nolan | Martin Scorsese  | Inception           |          2010 |
+| Christopher Nolan | Damien Chazelle  | Inception           |          2010 |
+| Christopher Nolan | Woody Allen      | Inception           |          2010 |
+| Damien Chazelle   | Steven Spielberg | La La Land          |          2016 |
+| Damien Chazelle   | Kathryn Bigelow  | La La Land          |          2016 |
+| Damien Chazelle   | Martin Scorsese  | La La Land          |          2016 |
+| Damien Chazelle   | Damien Chazelle  | La La Land          |          2016 |
+| Damien Chazelle   | Woody Allen      | La La Land          |          2016 |
+| Quentin Tarantino | Steven Spielberg | Django Unchained    |          2012 |
+| Quentin Tarantino | Kathryn Bigelow  | Django Unchained    |          2012 |
+| Quentin Tarantino | Martin Scorsese  | Django Unchained    |          2012 |
+| Quentin Tarantino | Damien Chazelle  | Django Unchained    |          2012 |
+| Quentin Tarantino | Woody Allen      | Django Unchained    |          2012 |
+| Alfred Hitchcock  | Steven Spielberg | Vertigo             |          1958 |
+| Alfred Hitchcock  | Kathryn Bigelow  | Vertigo             |          1958 |
+| Alfred Hitchcock  | Martin Scorsese  | Vertigo             |          1958 |
+| Alfred Hitchcock  | Damien Chazelle  | Vertigo             |          1958 |
+| Alfred Hitchcock  | Woody Allen      | Vertigo             |          1958 |
+| Steven Spielberg  | Steven Spielberg | Jaws                |          1975 |
+| Steven Spielberg  | Kathryn Bigelow  | Jaws                |          1975 |
+| Steven Spielberg  | Martin Scorsese  | Jaws                |          1975 |
+| Steven Spielberg  | Damien Chazelle  | Jaws                |          1975 |
+| Steven Spielberg  | Woody Allen      | Jaws                |          1975 |
+| Stanley Kubrick   | Steven Spielberg | 2001: Space Odessey |          1967 |
+| Stanley Kubrick   | Kathryn Bigelow  | 2001: Space Odessey |          1967 |
+| Stanley Kubrick   | Martin Scorsese  | 2001: Space Odessey |          1967 |
+| Stanley Kubrick   | Damien Chazelle  | 2001: Space Odessey |          1967 |
+| Stanley Kubrick   | Woody Allen      | 2001: Space Odessey |          1967 |
+| Satyajit Ray      | Steven Spielberg | Pather Panchali     |          1961 |
+| Satyajit Ray      | Kathryn Bigelow  | Pather Panchali     |          1961 |
+| Satyajit Ray      | Martin Scorsese  | Pather Panchali     |          1961 |
+| Satyajit Ray      | Damien Chazelle  | Pather Panchali     |          1961 |
+| Satyajit Ray      | Woody Allen      | Pather Panchali     |          1961 |
+| Kathryn Bigelow   | Steven Spielberg | The Hurt Locker     |          2008 |
+| Kathryn Bigelow   | Kathryn Bigelow  | The Hurt Locker     |          2008 |
+| Kathryn Bigelow   | Martin Scorsese  | The Hurt Locker     |          2008 |
+| Kathryn Bigelow   | Damien Chazelle  | The Hurt Locker     |          2008 |
+| Kathryn Bigelow   | Woody Allen      | The Hurt Locker     |          2008 |
++-------------------+------------------+---------------------+---------------+
+50 rows in set (0.00 sec)
+
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors left join oscarWinners on  movieDirectors.name=oscarWinners.name;
++-------------------+------------------+---------------------+---------------+
+| name              | name             | bestMovie           | yearOfRelease |
++-------------------+------------------+---------------------+---------------+
+| David Fincher     | NULL             | The Fight Club      |          1998 |
+| Martin Scorsese   | Martin Scorsese  | Taxi Driver         |          1976 |
+| Christopher Nolan | NULL             | Inception           |          2010 |
+| Damien Chazelle   | Damien Chazelle  | La La Land          |          2016 |
+| Quentin Tarantino | NULL             | Django Unchained    |          2012 |
+| Alfred Hitchcock  | NULL             | Vertigo             |          1958 |
+| Steven Spielberg  | Steven Spielberg | Jaws                |          1975 |
+| Stanley Kubrick   | NULL             | 2001: Space Odessey |          1967 |
+| Satyajit Ray      | NULL             | Pather Panchali     |          1961 |
+| Kathryn Bigelow   | Kathryn Bigelow  | The Hurt Locker     |          2008 |
++-------------------+------------------+---------------------+---------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select movieDirectors.name, oscarWinners.name, bestMovie,yearOfRelease from movieDirectors inner join oscarWinners on  movieDirectors.name=oscarWinners.name;
++------------------+------------------+-----------------+---------------+
+| name             | name             | bestMovie       | yearOfRelease |
++------------------+------------------+-----------------+---------------+
+| Steven Spielberg | Steven Spielberg | Jaws            |          1975 |
+| Kathryn Bigelow  | Kathryn Bigelow  | The Hurt Locker |          2008 |
+| Martin Scorsese  | Martin Scorsese  | Taxi Driver     |          1976 |
+| Damien Chazelle  | Damien Chazelle  | La La Land      |          2016 |
++------------------+------------------+-----------------+---------------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> select movieDirectors.name, listOfActors.actName, movieDirectors.bestMovie from movieDirectors inner join listOfActors on listOfActors.bestMovie=movieDirectors.bestMovie;
++-----------------+---------------+-----------------+
+| name            | actName       | bestMovie       |
++-----------------+---------------+-----------------+
+| David Fincher   | Edward Norton | The Fight Club  |
+| Kathryn Bigelow | Jeremy Renner | The Hurt Locker |
++-----------------+---------------+-----------------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> quit
+Bye

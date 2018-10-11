@@ -1,0 +1,649 @@
+[TE1@localhost ~]$ mysql -h 10.10.12.66 -u te3166 -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 30
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> use information_schema;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [information_schema]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> ;
+MySQL [te3166db]> create table customer_base(cust_id smallint primary key not null, custFirstName varchar(255) not null, custLastName varchar(255) not null, custCity varchar(255) not null, custPhoneNumber bigint not null, custAge smallint not null);  
+Query OK, 0 rows affected (0.12 sec)
+
+MySQL [te3166db]> show tables;
++--------------------+
+| Tables_in_te3166db |
++--------------------+
+| customer_base      |
+| emp_from_csv_trial |
+| employee_data      |
++--------------------+
+3 rows in set (0.00 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(1, 'Roger', 'Federer', 'Zurich', 9880932485, 37);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+----------+-----------------+---------+
+| cust_id | custFirstName | custLastName | custCity | custPhoneNumber | custAge |
++---------+---------------+--------------+----------+-----------------+---------+
+|       1 | Roger         | Federer      | Zurich   |      9880932485 |      37 |
++---------+---------------+--------------+----------+-----------------+---------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(2, 'Rafael', 'Nadal', 'Mallorca', 9880932483, 34);
+Query OK, 1 row affected (0.07 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(3, 'Serena', 'Williams', 'NYC', 9880932433, 35);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(4, 'Simona', 'Halep', 'Budapest', 9883932433, 30);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(5, 'Andy', 'Murray', 'London', 2883932433, 31);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(6, 'Pete', 'Sampras', 'Washington DC', 2883934342, 39);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(7, 'Bob', 'Bryan', 'Washington DC', 2883934343, 37);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(8, 'Mike', 'Bryan', 'Washington DC', 2883934743, 37);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(9, 'Som', 'Dev', 'Delhi', 2883934744, 33);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into customer_base(cust_id, custFirstName, custLastName, custCity, custPhoneNumber, custAge) values(10, 'Maria', 'Sharapova', 'Moscow', 2881932743, 34);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+---------------+-----------------+---------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge |
++---------+---------------+--------------+---------------+-----------------+---------+
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |
+|       7 | Bob           | Bryan        | Washington DC |      2883934343 |      37 |
+|       8 | Mike          | Bryan        | Washington DC |      2883934743 |      37 |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |
++---------+---------------+--------------+---------------+-----------------+---------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select cust_id, custFirstName, custLastName from customer_base where custAge=37;
++---------+---------------+--------------+
+| cust_id | custFirstName | custLastName |
++---------+---------------+--------------+
+|       1 | Roger         | Federer      |
+|       7 | Bob           | Bryan        |
+|       8 | Mike          | Bryan        |
++---------+---------------+--------------+
+3 rows in set (0.00 sec)
+
+MySQL [te3166db]> select cust_id, custFirstName, custLastName from customer_base where custCity='Washington DC';
++---------+---------------+--------------+
+| cust_id | custFirstName | custLastName |
++---------+---------------+--------------+
+|       6 | Pete          | Sampras      |
+|       7 | Bob           | Bryan        |
+|       8 | Mike          | Bryan        |
++---------+---------------+--------------+
+3 rows in set (0.00 sec)
+
+MySQL [te3166db]> select cust_id, custFirstName, custCity from customer_base where custLastName='Bryan';
++---------+---------------+---------------+
+| cust_id | custFirstName | custCity      |
++---------+---------------+---------------+
+|       7 | Bob           | Washington DC |
+|       8 | Mike          | Washington DC |
++---------+---------------+---------------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> alter table customer_base add column custWorldRank smallint not null;
+Query OK, 10 rows affected (0.25 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge | custWorldRank |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |             0 |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |             0 |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |             0 |
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |             0 |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |             0 |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |             0 |
+|       7 | Bob           | Bryan        | Washington DC |      2883934343 |      37 |             0 |
+|       8 | Mike          | Bryan        | Washington DC |      2883934743 |      37 |             0 |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |             0 |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |             0 |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> update customer_base set custWorldRank='1' where cust_id=1;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge | custWorldRank |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |             1 |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |             0 |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |             0 |
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |             0 |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |             0 |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |             0 |
+|       7 | Bob           | Bryan        | Washington DC |      2883934343 |      37 |             0 |
+|       8 | Mike          | Bryan        | Washington DC |      2883934743 |      37 |             0 |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |             0 |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |             0 |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> update customer_base set custWorldRank='2' where cust_id=2;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set custWorldRank='3' where cust_id=3;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set custWorldRank='1' where cust_id=4;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set custWorldRank='6' where cust_id=5;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set custWorldRank='100' where cust_id=6;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set custWorldRank='23' where cust_id=7;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set custWorldRank='28' where cust_id=8;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set custWorldRank='126' where cust_id=9;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set custWorldRank='26' where cust_id=10;
+Query OK, 1 row affected (0.02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge | custWorldRank |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |             1 |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |             2 |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |             3 |
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |             1 |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |             6 |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |           100 |
+|       7 | Bob           | Bryan        | Washington DC |      2883934343 |      37 |            23 |
+|       8 | Mike          | Bryan        | Washington DC |      2883934743 |      37 |            28 |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |           126 |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |            26 |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select reverse(custFirstName) from customer_base;
++------------------------+
+| reverse(custFirstName) |
++------------------------+
+| regoR                  |
+| leafaR                 |
+| anereS                 |
+| anomiS                 |
+| ydnA                   |
+| eteP                   |
+| boB                    |
+| ekiM                   |
+| moS                    |
+| airaM                  |
++------------------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select lower(custFirstName) as lowercaseClower(custLastName) as lowercaseCustomerLastName 
+[1]+  Stopped                 mysql -h 10.10.12.66 -u te3166 -p
+[TE1@localhost ~]$ mysql -h 10.10.12.66 -u te3166 -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 44
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> select lower(custFirstName) as lowercaseCustomerFirstName, upper(custLastName) as uppercaseCustomerLastName from customer_base;
++----------------------------+---------------------------+
+| lowercaseCustomerFirstName | uppercaseCustomerLastName |
++----------------------------+---------------------------+
+| roger                      | FEDERER                   |
+| rafael                     | NADAL                     |
+| serena                     | WILLIAMS                  |
+| simona                     | HALEP                     |
+| andy                       | MURRAY                    |
+| pete                       | SAMPRAS                   |
+| bob                        | BRYAN                     |
+| mike                       | BRYAN                     |
+| som                        | DEV                       |
+| maria                      | SHARAPOVA                 |
++----------------------------+---------------------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]>  select * from customer_base limit 5;
++---------+---------------+--------------+----------+-----------------+---------+---------------+
+| cust_id | custFirstName | custLastName | custCity | custPhoneNumber | custAge | custWorldRank |
++---------+---------------+--------------+----------+-----------------+---------+---------------+
+|       1 | Roger         | Federer      | Zurich   |      9880932485 |      37 |             1 |
+|       2 | Rafael        | Nadal        | Mallorca |      9880932483 |      34 |             2 |
+|       3 | Serena        | Williams     | NYC      |      9880932433 |      35 |             3 |
+|       4 | Simona        | Halep        | Budapest |      9883932433 |      30 |             1 |
+|       5 | Andy          | Murray       | London   |      2883932433 |      31 |             6 |
++---------+---------------+--------------+----------+-----------------+---------+---------------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> alter table customer_base add column cust_sex varchar(10) not null;
+Query OK, 10 rows affected (0.29 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |             1 |          |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |             2 |          |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |             3 |          |
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |             1 |          |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |             6 |          |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |           100 |          |
+|       7 | Bob           | Bryan        | Washington DC |      2883934343 |      37 |            23 |          |
+|       8 | Mike          | Bryan        | Washington DC |      2883934743 |      37 |            28 |          |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |           126 |          |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |            26 |          |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+10 rows in set (0.01 sec)
+
+MySQL [te3166db]> seeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'seeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' at line 1
+MySQL [te3166db]> campione campione! ole ole ole!
+    -> l
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'campione campione! ole ole ole!
+l' at line 1
+MySQL [te3166db]> select * from customer_base where rownum=3;
+ERROR 1054 (42S22): Unknown column 'rownum' in 'where clause'
+MySQL [te3166db]> select * top 50 percent from customer_base;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'top 50 percent from customer_base' at line 1
+MySQL [te3166db]> select top 50 percent * from customer_base;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '50 percent * from customer_base' at line 1
+MySQL [te3166db]> select top 50percent * from customer_base;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '* from customer_base' at line 1
+MySQL [te3166db]> select top 50 PERCENT * from customer_base;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '50 PERCENT * from customer_base' at line 1
+MySQL [te3166db]> select TOP 50 PERCENT * from customer_base;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '50 PERCENT * from customer_base' at line 1
+MySQL [te3166db]> select TOP 50 PERCENT * from customer_base;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '50 PERCENT * from customer_base' at line 1
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> select * from customer_base where in(select min(custFirstName) from customer_base);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in(select min(custFirstName) from customer_base)' at line 1
+MySQL [te3166db]> select min(custFirstName) from customer_base;
++--------------------+
+| min(custFirstName) |
++--------------------+
+| Andy               |
++--------------------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select * from customer_base where (select min(custFirstName) from customer_base);
+Empty set (0.00 sec)
+
+MySQL [te3166db]> select * from customer_base (select min(custFirstName) from customer_base);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(select min(custFirstName) from customer_base)' at line 1
+MySQL [te3166db]> select * from customer_base where in(select min(custFirstName) from customer_base);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in(select min(custFirstName) from customer_base)' at line 1
+MySQL [te3166db]> select * from customer_base where custFirstName in(select min(custFirstName) from customer_base);
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+|       5 | Andy          | Murray       | London   |      2883932433 |      31 |             6 |          |
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> update customer_base set cust_sex='Male' where cust_id=1;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |             1 | Male     |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |             2 |          |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |             3 |          |
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |             1 |          |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |             6 |          |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |           100 |          |
+|       7 | Bob           | Bryan        | Washington DC |      2883934343 |      37 |            23 |          |
+|       8 | Mike          | Bryan        | Washington DC |      2883934743 |      37 |            28 |          |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |           126 |          |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |            26 |          |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> update customer_base set cust_sex='Male' where cust_id=2;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set cust_sex='Female' where cust_id=3;
+Query OK, 1 row affected (0.06 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set cust_sex='Female' where cust_id=4;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set cust_sex='Male' where cust_id=5;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set cust_sex='Male' where cust_id=6;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set cust_sex='Male' where cust_id=7;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set cust_sex='Male' where cust_id=8;
+Query OK, 1 row affected (0.07 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set cust_sex='Male' where cust_id=9;
+Query OK, 1 row affected (0.07 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update customer_base set cust_sex='Female' where cust_id=10;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |             1 | Male     |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |             2 | Male     |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |             3 | Female   |
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |             1 | Female   |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |             6 | Male     |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |           100 | Male     |
+|       7 | Bob           | Bryan        | Washington DC |      2883934343 |      37 |            23 | Male     |
+|       8 | Mike          | Bryan        | Washington DC |      2883934743 |      37 |            28 | Male     |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |           126 | Male     |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |            26 | Female   |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from customer_base where custFirstName like 'R%';
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+|       1 | Roger         | Federer      | Zurich   |      9880932485 |      37 |             1 | Male     |
+|       2 | Rafael        | Nadal        | Mallorca |      9880932483 |      34 |             2 | Male     |
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> select count(cust_id) from customer_base where custCity='Washington DC';
++----------------+
+| count(cust_id) |
++----------------+
+|              3 |
++----------------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select * from customer_base group by custCity;
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |             1 | Female   |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |           126 | Male     |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |             6 | Male     |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |             2 | Male     |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |            26 | Female   |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |             3 | Female   |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |           100 | Male     |
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |             1 | Male     |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> select custCity from customer_base group by custCity;
++---------------+
+| custCity      |
++---------------+
+| Budapest      |
+| Delhi         |
+| London        |
+| Mallorca      |
+| Moscow        |
+| NYC           |
+| Washington DC |
+| Zurich        |
++---------------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> select count(custCity) from customer_base group by custCity;
++-----------------+
+| count(custCity) |
++-----------------+
+|               1 |
+|               1 |
+|               1 |
+|               1 |
+|               1 |
+|               1 |
+|               3 |
+|               1 |
++-----------------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> select count(custCity) from customer_base order by custCity;
++-----------------+
+| count(custCity) |
++-----------------+
+|              10 |
++-----------------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select count(custCity) from customer_base;
++-----------------+
+| count(custCity) |
++-----------------+
+|              10 |
++-----------------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select count(custCity), custCity from customer_base order by custCity;
++-----------------+----------+
+| count(custCity) | custCity |
++-----------------+----------+
+|              10 | Zurich   |
++-----------------+----------+
+1 row in set (0.01 sec)
+
+MySQL [te3166db]> select count(custCity), custCity from customer_base group by custCity;
++-----------------+---------------+
+| count(custCity) | custCity      |
++-----------------+---------------+
+|               1 | Budapest      |
+|               1 | Delhi         |
+|               1 | London        |
+|               1 | Mallorca      |
+|               1 | Moscow        |
+|               1 | NYC           |
+|               3 | Washington DC |
+|               1 | Zurich        |
++-----------------+---------------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> select count(custCity),custFirstName from customer_base group by custCity;
++-----------------+---------------+
+| count(custCity) | custFirstName |
++-----------------+---------------+
+|               1 | Simona        |
+|               1 | Som           |
+|               1 | Andy          |
+|               1 | Rafael        |
+|               1 | Maria         |
+|               1 | Serena        |
+|               3 | Pete          |
+|               1 | Roger         |
++-----------------+---------------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> create procedure displayAllCustomers as select * from customer_base go;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'as select * from customer_base go' at line 1
+MySQL [te3166db]> create procedure displayAllCustomers as select * from customer_base;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'as select * from customer_base' at line 1
+MySQL [te3166db]> create procedure displayAllCustomers as select * from customer_base go;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'as select * from customer_base go' at line 1
+MySQL [te3166db]> alter table customer_base auto_increment=100;
+Query OK, 10 rows affected (0.25 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity      | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+|       1 | Roger         | Federer      | Zurich        |      9880932485 |      37 |             1 | Male     |
+|       2 | Rafael        | Nadal        | Mallorca      |      9880932483 |      34 |             2 | Male     |
+|       3 | Serena        | Williams     | NYC           |      9880932433 |      35 |             3 | Female   |
+|       4 | Simona        | Halep        | Budapest      |      9883932433 |      30 |             1 | Female   |
+|       5 | Andy          | Murray       | London        |      2883932433 |      31 |             6 | Male     |
+|       6 | Pete          | Sampras      | Washington DC |      2883934342 |      39 |           100 | Male     |
+|       7 | Bob           | Bryan        | Washington DC |      2883934343 |      37 |            23 | Male     |
+|       8 | Mike          | Bryan        | Washington DC |      2883934743 |      37 |            28 | Male     |
+|       9 | Som           | Dev          | Delhi         |      2883934744 |      33 |           126 | Male     |
+|      10 | Maria         | Sharapova    | Moscow        |      2881932743 |      34 |            26 | Female   |
++---------+---------------+--------------+---------------+-----------------+---------+---------------+----------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> alter table customer_base column cust_id auto_increment=100;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'column cust_id auto_increment=100' at line 1
+MySQL [te3166db]> create view femaleCustomerDetails as select * from customer_base from customer_base where cust_sex='Female';  
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from customer_base where cust_sex='Female'' at line 1
+MySQL [te3166db]> create view femaleCustomerDetails as select * from customer_base where cust_sex='Female';  
+Query OK, 0 rows affected (0.13 sec)
+
+MySQL [te3166db]> select * from [femaleCustomerDetails];
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '[femaleCustomerDetails]' at line 1
+MySQL [te3166db]> select * from femaleCustomerDetails;
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+|       3 | Serena        | Williams     | NYC      |      9880932433 |      35 |             3 | Female   |
+|       4 | Simona        | Halep        | Budapest |      9883932433 |      30 |             1 | Female   |
+|      10 | Maria         | Sharapova    | Moscow   |      2881932743 |      34 |            26 | Female   |
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+3 rows in set (0.01 sec)
+
+MySQL [te3166db]> show tables;
++-----------------------+
+| Tables_in_te3166db    |
++-----------------------+
+| customer_base         |
+| emp_from_csv_trial    |
+| employee_data         |
+| femaleCustomerDetails |
++-----------------------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> delete * from customer_base where custCity='Washington DC';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '* from customer_base where custCity='Washington DC'' at line 1
+MySQL [te3166db]> delete from customer_base where custCity='Washington DC';
+Query OK, 3 rows affected (0.03 sec)
+
+MySQL [te3166db]> select * from customer_base;
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+| cust_id | custFirstName | custLastName | custCity | custPhoneNumber | custAge | custWorldRank | cust_sex |
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+|       1 | Roger         | Federer      | Zurich   |      9880932485 |      37 |             1 | Male     |
+|       2 | Rafael        | Nadal        | Mallorca |      9880932483 |      34 |             2 | Male     |
+|       3 | Serena        | Williams     | NYC      |      9880932433 |      35 |             3 | Female   |
+|       4 | Simona        | Halep        | Budapest |      9883932433 |      30 |             1 | Female   |
+|       5 | Andy          | Murray       | London   |      2883932433 |      31 |             6 | Male     |
+|       9 | Som           | Dev          | Delhi    |      2883934744 |      33 |           126 | Male     |
+|      10 | Maria         | Sharapova    | Moscow   |      2881932743 |      34 |            26 | Female   |
++---------+---------------+--------------+----------+-----------------+---------+---------------+----------+
+7 rows in set (0.00 sec)
+
+MySQL [te3166db]> 
+
+

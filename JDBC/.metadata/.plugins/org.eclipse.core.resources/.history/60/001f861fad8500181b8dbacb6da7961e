@@ -1,0 +1,31 @@
+import java.sql.*;
+import java.util.*;
+import com.oracle.*;
+
+class trialJDBC
+{
+    public static void main(String a[]) throws Exception
+    {
+        Connection connect = null;
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+        
+        String user = "te3166";
+        String pass = "te3166";
+        connect = DriverManager.getConnection("jdbc:mysql://10.10.12.54:3306/te3166db", user, pass);
+        Statement stmt = connect.createStatement();
+        
+        String query = "select * from movieDirectors";
+        boolean status = stmt.execute(query);
+        
+        if (status) {
+        	ResultSet res = stmt.getResultSet();
+        	while (res.next()) {
+        		String part1 = res.getString("name");
+        		String part2 = res.getString("bestMovie");
+        		System.out.println("Name: " +  part1 + " Best Movie: " + part2 + "\n");
+        	}
+        } else {
+        	System.out.println("There's been an error!");
+        }
+    }
+}

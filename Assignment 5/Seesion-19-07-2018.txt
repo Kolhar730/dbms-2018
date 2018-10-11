@@ -1,0 +1,286 @@
+[TE1@localhost ~]$ su
+Password: 
+[root@localhost TE1]# /etc/init.d/oracle-xe restart
+Restarting oracle-xe (via systemctl):                      [  OK  ]
+[root@localhost TE1]# cd /u01/app/oracle/product/11.2.0/xe/bin
+[root@localhost bin]# . ./oracle_env.sh
+[root@localhost bin]# sqlplus system
+
+SQL*Plus: Release 11.2.0.2.0 Production on Thu Jul 19 13:18:30 2018
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+Enter password: 
+ERROR:
+ORA-28002: the password will expire within 0 days
+
+
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> DELIMITER /
+SP2-0734: unknown command beginning "DELIMITER ..." - rest of line ignored.
+SQL> CREATE OR REPLACE PROCEDURE greet 
+  2  ^C
+
+SQL> DECLARE 
+   message  varchar2(20):= 'Hello, World!'; 
+BEGIN 
+   dbms_output.put_line(message); 
+END;  2    3    4       
+  6  
+  7  
+  8  /
+DECLARE
+*
+ERROR at line 1:
+ORA-06550: line 7, column 0:
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the
+following:
+( begin case declare end exception exit for goto if loop mod
+null pragma raise return select update while with
+<an identifier> <a double-quoted delimited-identifier>
+<a bind variable> << continue close current delete fetch lock
+insert open rollback savepoint set sql execute commit forall
+merge pipe purge
+
+
+SQL> DECLARE
+  2  message varchar2(20):= 'Hello World';
+  3  BEGIN
+  4  dbms_output.put_line(message);
+  5  END:
+  6  ;       
+  7  /
+END:
+   *
+ERROR at line 5:
+ORA-06550: line 5, column 4:
+PLS-00103: Encountered the symbol ":" when expecting one of the following:
+; <an identifier> <a double-quoted delimited-identifier>
+The symbol ":" was ignored.
+
+
+SQL> DECLARE 
+  2  message varchar2(20):= 'Hello World';
+  3  BEGIN
+  4  dbms_output.put_line(message);
+  5  END  2    3    ^Zx^X^C 
+
+SQL> 
+SQL> 
+SQL> DECLARE
+  2  message varchar2(12):='Hello, Wor';
+  3  BEGIN
+  4  dbms_output.put_line(message);
+  5  END;
+  6  /
+
+PL/SQL procedure successfully completed.
+
+SQL> call
+  2  ;
+
+*
+ERROR at line 2:
+ORA-00936: missing expression
+
+
+SQL> message
+'SP2-0042: unknown command "message" - rest of line ignored.
+SQL> show message
+SP2-0734: unknown command beginning "'show mess..." - rest of line ignored.
+SQL> '
+SP2-0042: unknown command "'" - rest of line ignored.
+SQL> call procedure
+  2  ;
+call procedure
+     *
+ERROR at line 1:
+ORA-06576: not a valid function or procedure name
+
+
+SQL> call;
+call
+   *
+ERROR at line 1:
+ORA-00936: missing expression
+
+
+SQL> CREATE OR REPLACE PROCEDURE hello
+  2  declare
+  3  message varchar2(2):='Hello, World';
+  4  begin
+  5  dbms_output.put_line(message);    
+  6  end;
+  7  /
+
+Warning: Procedure created with compilation errors.
+
+SQL> call hello;
+call hello
+     *
+ERROR at line 1:
+ORA-06576: not a valid function or procedure name
+
+
+SQL> call hello();
+call hello()
+     *
+ERROR at line 1:
+ORA-06575: Package or function HELLO is in an invalid state
+
+
+SQL> create procedure hello
+  2  as
+  3  begin
+  4  dbms_output.put_line('Hello, World');
+  5  end;
+  6  /
+create procedure hello
+                 *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> create procedure hello2
+  2  as
+  3  begin
+  4  dbms_output.put_line('Hello, World');
+  5  end;
+  6  /
+
+Procedure created.
+
+SQL> call hello2();
+
+Call completed.
+
+SQL> execute hello2(); 
+
+PL/SQL procedure successfully completed.
+
+SQL> execute hello2;
+
+PL/SQL procedure successfully completed.
+
+SQL> begin
+  2  hello2;
+  3  end;
+  4  /
+
+PL/SQL procedure successfully completed.
+
+SQL> SET SERVEROUT ON
+SQL> execute hello2;
+Hello, World
+
+PL/SQL procedure successfully completed.
+
+SQL> drop procedure hello;
+
+Procedure dropped.
+
+SQL> create table tamatar(id int);
+
+Table created.
+
+SQL> insert into tamatar (id) values (2), (3), (5);
+insert into tamatar (id) values (2), (3), (5)
+                                   *
+ERROR at line 1:
+ORA-00933: SQL command not properly ended
+
+
+SQL> insert into tamatar values (2);
+
+1 row created.
+
+SQL> insert into tamatar values (4); 
+
+1 row created.
+
+SQL> declare 
+  2  select * from tamatar;
+  3  end;
+  4  /
+select * from tamatar;
+*
+ERROR at line 2:
+ORA-06550: line 2, column 1:
+PLS-00103: Encountered the symbol "SELECT" when expecting one of the following:
+begin function pragma procedure subtype type <an identifier>
+<a double-quoted delimited-identifier> current cursor delete
+exists prior
+The symbol "begin" was substituted for "SELECT" to continue.
+
+
+SQL> declare
+  2  begin
+  3  select * from tamatar;
+  4  end;
+  5  /
+select * from tamatar;
+*
+ERROR at line 3:
+ORA-06550: line 3, column 1:
+PLS-00428: an INTO clause is expected in this SELECT statement
+
+
+SQL> create procedure gg
+  2  as
+  3  begin
+  4  select * from tamatar;
+  5  end;
+  6  /
+
+Warning: Procedure created with compilation errors.
+
+SQL> execute gg;
+BEGIN gg; END;
+
+      *
+ERROR at line 1:
+ORA-06550: line 1, column 7:
+PLS-00905: object SYSTEM.GG is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+
+SQL> BEGIN 
+  2  dbms_output.enable
+  3  dbms_output.put_line('Table Tamatar is: ');
+  4  FOR t in (SELECT id from tamatar)
+  5  LOOP
+  6  dbms_output.put_line(t.id);
+  7  END LOOP; 
+  8  END;
+  9  /
+dbms_output.put_line('Table Tamatar is: ');
+*
+ERROR at line 3:
+ORA-06550: line 3, column 1:
+PLS-00103: Encountered the symbol "DBMS_OUTPUT" when expecting one of the
+following:
+:= . ( @ % ;
+The symbol ":=" was substituted for "DBMS_OUTPUT" to continue.
+
+
+SQL> BEGIN
+  2  dbms_output.put_line('The Table Tamatar is:');
+  3  FOR t in (SELECT id from tamatar)
+  4  LOOP
+  5  dbms_output.put_line(t.id);
+  6  END LOOP;
+  7  END;
+  8  /
+The Table Tamatar is:
+2
+4
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+
+

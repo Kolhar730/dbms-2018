@@ -1,0 +1,238 @@
+[TE1@localhost ~]$ echo $?
+0
+[TE1@localhost ~]$ echo police
+police
+[TE1@localhost ~]$ echo $?
+0
+[TE1@localhost ~]$ mysql -h 10.10.12.66 -u te3166 -p
+Enter password: 
+ERROR 2003 (HY000): Can't connect to MySQL server on '10.10.12.66' (113)
+[TE1@localhost ~]$ mysql -h 10.10.12.168 -u te3166 -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 32
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> ls
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ls' at line 1
+MySQL [te3166db]> 
+MySQL [te3166db]> create table bandFrom90s (band_id smallint not null primary key auto_increment, band_name varchar(255) not null, num_of_members smallint not null, bestAlbum varchar(255) not null, concept_year int not null, country_from varchar(255) not null);
+Query OK, 0 rows affected (0.13 sec)
+
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Linkin Park', 6, 'Hybrid Theory', 1997, 'US');
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Coldplay', 4, 'X&Y', 1997, 'England');
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> select * from bandFrom90s;
++---------+-------------+----------------+---------------+--------------+--------------+
+| band_id | band_name   | num_of_members | bestAlbum     | concept_year | country_from |
++---------+-------------+----------------+---------------+--------------+--------------+
+|       1 | Linkin Park |              6 | Hybrid Theory |         1997 | US           |
+|       2 | Coldplay    |              4 | X&Y           |         1997 | England      |
++---------+-------------+----------------+---------------+--------------+--------------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Green Day', 3, 'Nimrod', 1995, 'US');
+Query OK, 1 row affected (0.02 sec)
+
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Nirvana', 4, 'Nirvana', 1986, 'US');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> select * from bandFrom90s;
++---------+-------------+----------------+---------------+--------------+--------------+
+| band_id | band_name   | num_of_members | bestAlbum     | concept_year | country_from |
++---------+-------------+----------------+---------------+--------------+--------------+
+|       1 | Linkin Park |              6 | Hybrid Theory |         1997 | US           |
+|       2 | Coldplay    |              4 | X&Y           |         1997 | England      |
+|       3 | Green Day   |              3 | Nimrod        |         1995 | US           |
+|       4 | Nirvana     |              4 | Nirvana       |         1986 | US           |
++---------+-------------+----------------+---------------+--------------+--------------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Red Hot Chilli Peppers', 4, 'Californication', 1983, 'US');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> 
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Radiohead', 5, 'The Bends', 1985, 'England');
+Query OK, 1 row affected (0.06 sec)
+
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Foo Fighters', 4, 'The Color and the Shape', 1994, 'US');
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Metallica', 4, 'Metallica', 1991, 'US');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> select * from bandFrom90s;
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+| band_id | band_name              | num_of_members | bestAlbum               | concept_year | country_from |
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+|       1 | Linkin Park            |              6 | Hybrid Theory           |         1997 | US           |
+|       2 | Coldplay               |              4 | X&Y                     |         1997 | England      |
+|       3 | Green Day              |              3 | Nimrod                  |         1995 | US           |
+|       4 | Nirvana                |              4 | Nirvana                 |         1986 | US           |
+|       5 | Red Hot Chilli Peppers |              4 | Californication         |         1983 | US           |
+|       6 | Radiohead              |              5 | The Bends               |         1985 | England      |
+|       7 | Foo Fighters           |              4 | The Color and the Shape |         1994 | US           |
+|       8 | Metallica              |              4 | Metallica               |         1991 | US           |
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('System of a Down', 4, 'Toxicity', 1984, 'US');
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into bandFrom90s (band_name, num_of_members, bestAlbum, concept_year, country_from) values ('Oasis', 5, '(What\'s the Song) Morning Glory?', 1991, 'England');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> select * from bandFrom90s;
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+| band_id | band_name              | num_of_members | bestAlbum                        | concept_year | country_from |
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+|       1 | Linkin Park            |              6 | Hybrid Theory                    |         1997 | US           |
+|       2 | Coldplay               |              4 | X&Y                              |         1997 | England      |
+|       3 | Green Day              |              3 | Nimrod                           |         1995 | US           |
+|       4 | Nirvana                |              4 | Nirvana                          |         1986 | US           |
+|       5 | Red Hot Chilli Peppers |              4 | Californication                  |         1983 | US           |
+|       6 | Radiohead              |              5 | The Bends                        |         1985 | England      |
+|       7 | Foo Fighters           |              4 | The Color and the Shape          |         1994 | US           |
+|       8 | Metallica              |              4 | Metallica                        |         1991 | US           |
+|       9 | System of a Down       |              4 | Toxicity                         |         1984 | US           |
+|      10 | Oasis                  |              5 | (What's the Song) Morning Glory? |         1991 | England      |
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from bandsFrom90s where num_of_members=4;
+ERROR 1146 (42S02): Table 'te3166db.bandsFrom90s' doesn't exist
+MySQL [te3166db]> select * from bandFrom90s where num_of_members=4;
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+| band_id | band_name              | num_of_members | bestAlbum               | concept_year | country_from |
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+|       2 | Coldplay               |              4 | X&Y                     |         1997 | England      |
+|       4 | Nirvana                |              4 | Nirvana                 |         1986 | US           |
+|       5 | Red Hot Chilli Peppers |              4 | Californication         |         1983 | US           |
+|       7 | Foo Fighters           |              4 | The Color and the Shape |         1994 | US           |
+|       8 | Metallica              |              4 | Metallica               |         1991 | US           |
+|       9 | System of a Down       |              4 | Toxicity                |         1984 | US           |
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+6 rows in set (0.00 sec)
+
+MySQL [te3166db]> create view bandsWithFourMembers as select * from bandFrom90s;
+Query OK, 0 rows affected (0.04 sec)
+
+MySQL [te3166db]> select * from bandsWithFourMembers;
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+| band_id | band_name              | num_of_members | bestAlbum                        | concept_year | country_from |
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+|       1 | Linkin Park            |              6 | Hybrid Theory                    |         1997 | US           |
+|       2 | Coldplay               |              4 | X&Y                              |         1997 | England      |
+|       3 | Green Day              |              3 | Nimrod                           |         1995 | US           |
+|       4 | Nirvana                |              4 | Nirvana                          |         1986 | US           |
+|       5 | Red Hot Chilli Peppers |              4 | Californication                  |         1983 | US           |
+|       6 | Radiohead              |              5 | The Bends                        |         1985 | England      |
+|       7 | Foo Fighters           |              4 | The Color and the Shape          |         1994 | US           |
+|       8 | Metallica              |              4 | Metallica                        |         1991 | US           |
+|       9 | System of a Down       |              4 | Toxicity                         |         1984 | US           |
+|      10 | Oasis                  |              5 | (What's the Song) Morning Glory? |         1991 | England      |
++---------+------------------------+----------------+----------------------------------+--------------+--------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> create view bandsWithFourMembers as select * from bandFrom90s where num_of_members=4;
+ERROR 1050 (42S01): Table 'bandsWithFourMembers' already exists
+MySQL [te3166db]> create view bandsWith4Members as select * from bandFrom90s where num_of_members=4;
+Query OK, 0 rows affected (0.03 sec)
+
+MySQL [te3166db]> select * from bandsWith4Members;
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+| band_id | band_name              | num_of_members | bestAlbum               | concept_year | country_from |
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+|       2 | Coldplay               |              4 | X&Y                     |         1997 | England      |
+|       4 | Nirvana                |              4 | Nirvana                 |         1986 | US           |
+|       5 | Red Hot Chilli Peppers |              4 | Californication         |         1983 | US           |
+|       7 | Foo Fighters           |              4 | The Color and the Shape |         1994 | US           |
+|       8 | Metallica              |              4 | Metallica               |         1991 | US           |
+|       9 | System of a Down       |              4 | Toxicity                |         1984 | US           |
++---------+------------------------+----------------+-------------------------+--------------+--------------+
+6 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from bandsWith4Members where country_from='England';
++---------+-----------+----------------+-----------+--------------+--------------+
+| band_id | band_name | num_of_members | bestAlbum | concept_year | country_from |
++---------+-----------+----------------+-----------+--------------+--------------+
+|       2 | Coldplay  |              4 | X&Y       |         1997 | England      |
++---------+-----------+----------------+-----------+--------------+--------------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> create table myFavSongs (song_id smallint not null primary key auto_increment, songName varchar(255) not null, bandName varchar
+    -> (255) not null, year int not null) auto_increment = 600;
+Query OK, 0 rows affected (0.10 sec)
+
+MySQL [te3166db]> insert into myFavSongs (songName, bandName, year) values ('Paradise', 'Coldplay', 2007);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into myFavSongs (songName, bandName, year) values ('Everlong', 'Foo Fighters', 1998);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into myFavSongs (songName, bandName, year) values ('In the End', 'Linkin Park', 2003);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into myFavSongs (songName, bandName, year) values ('Californication', 'Red Hot Chilli Peppers', 2002);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into myFavSongs (songName, bandName, year) values ('Unforgiven', 'Metallica', 1991);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> select * from myFavSongs;
++---------+-----------------+------------------------+------+
+| song_id | songName        | bandName               | year |
++---------+-----------------+------------------------+------+
+|     600 | Paradise        | Coldplay               | 2007 |
+|     601 | Everlong        | Foo Fighters           | 1998 |
+|     602 | In the End      | Linkin Park            | 2003 |
+|     603 | Californication | Red Hot Chilli Peppers | 2002 |
+|     604 | Unforgiven      | Metallica              | 1991 |
++---------+-----------------+------------------------+------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.bestAlbum, bandFrom90s.concept_year from bandFrom90s inner join myFavSongs on bandfrom90s.band_name=myFavSongs.bandName;
+ERROR 1054 (42S22): Unknown column 'bandfrom90s.band_name' in 'on clause'
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.bestAlbum, bandFrom90s.concept_year from bandFrom90s inner join myFavSongs on bandfrom90s.band_name=myFavSongs.bandName;
+ERROR 1054 (42S22): Unknown column 'bandfrom90s.band_name' in 'on clause'
+MySQL [te3166db]> alter table myFavSongs change `bandName` `band_name` datatype(length);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'datatype(length)' at line 1
+MySQL [te3166db]> alter table myFavSongs change `bandName` `band_name` varchar(255) not null;
+Query OK, 5 rows affected (0.24 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MySQL [te3166db]> select * from myFavSongs;
++---------+-----------------+------------------------+------+
+| song_id | songName        | band_name              | year |
++---------+-----------------+------------------------+------+
+|     600 | Paradise        | Coldplay               | 2007 |
+|     601 | Everlong        | Foo Fighters           | 1998 |
+|     602 | In the End      | Linkin Park            | 2003 |
+|     603 | Californication | Red Hot Chilli Peppers | 2002 |
+|     604 | Unforgiven      | Metallica              | 1991 |
++---------+-----------------+------------------------+------+
+5 rows in set (0.00 sec)
+
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.bestAlbum, bandFrom90s.concept_year from bandFrom90s inner join myFavSongs on bandfrom90s.band_name=myFavSongs.band_name;
+ERROR 1054 (42S22): Unknown column 'bandfrom90s.band_name' in 'on clause'
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.bestAlbum, bandFrom90s.concept_year,myFavSongs.songName, myFavSongs.band_name from bandFrom90s inner join myFavSongs on bandfrom90s.band_name=myFavSongs.band_name;
+ERROR 1054 (42S22): Unknown column 'bandfrom90s.band_name' in 'on clause'
+MySQL [te3166db]> select bandFrom90s.band_name, bandFrom90s.bestAlbum, bandFrom90s.concept_year,myFavSongs.songName, myFavSongs.band_name from bandFrom90s inner join myFavSongs on bandfrom90s.band_name=myFavSongs.band_name;Ctrl-C -- exit!
+Aborted
+[TE1@localhost ~]$ insert into myFavSongs (songName, bandName, year) values ('Unforgiven', 'Metallica', 1991);
+

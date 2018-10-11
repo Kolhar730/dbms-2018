@@ -1,0 +1,446 @@
+[TE1@localhost ~]$ mysql -h 10.10.14.2 -u te3166 -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 4
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> create table totalStudents (count int);
+Query OK, 0 rows affected (0.11 sec)
+
+MySQL [te3166db]> create trigger count_total_students
+    -> after insert on Student2
+    -> for each row
+    -> update totalStudents set totalStudents.count = totalStudents.count+1;
+Query OK, 0 rows affected (0.08 sec)
+
+MySQL [te3166db]> select * from Student2;
++------------+-----------------+-------------------+--------+------------+--------+
+| rollNumber | name            | date_of_admission | branch | percentage | status |
++------------+-----------------+-------------------+--------+------------+--------+
+|        100 | Sam K           | 2015-07-19        | COMP   |         67 | P      |
+|        101 | Robert          | 2015-09-19        | COMP   |         72 | A      |
+|        102 | Sagar           | 2015-04-21        | IT     |         72 | A      |
+|        103 | Alice           | 2013-07-22        | EnTC   |         62 | P      |
+|        104 | James Bond      | 2017-09-02        | EnTC   |         69 | A      |
+|        105 | Sherlock Holmes | 2017-10-02        | COMP   |         79 | P      |
++------------+-----------------+-------------------+--------+------------+--------+
+6 rows in set (0.00 sec)
+
+MySQL [te3166db]> insert into Student2 values (106, 'Trigger Man', '2017-08-13', 'COMP', 54, 'A');
+Query OK, 1 row affected (0.02 sec)
+
+MySQL [te3166db]> select * from totalStudents;
+Empty set (0.00 sec)
+
+MySQL [te3166db]> create or replace trigger count_total_students after insert on count for each row update totalStudents set totalStudents.count = totalStudents.count+1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'trigger count_total_students after insert on count for each row update totalStud' at line 1
+MySQL [te3166db]> create trigger count_total_students2 after insert on count for each row update totalStudents set totalStudents.count = totalStudents.count+1;
+ERROR 1146 (42S02): Table 'te3166db.count' doesn't exist
+MySQL [te3166db]> insert into totalStudents values(0);
+Query OK, 1 row affected (0.06 sec)
+
+MySQL [te3166db]> select * from totalStudents;
++-------+
+| count |
++-------+
+|     0 |
++-------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> insert into Student2 values (107, 'Trig Mn', '2007-04-13', 'EnTC', 59, 'A');
+Query OK, 1 row affected (0.07 sec)
+
+MySQL [te3166db]> select * from totalStudents;
++-------+
+| count |
++-------+
+|     1 |
++-------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> show triggers;
++----------------------+--------+----------+----------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+| Trigger              | Event  | Table    | Statement                                                            | Timing | Created | sql_mode | Definer  | character_set_client | collation_connection | Database Collation |
++----------------------+--------+----------+----------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+| count_total_students | INSERT | Student2 | update totalStudents set totalStudents.count = totalStudents.count+1 | AFTER  | NULL    |          | te3166@% | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
++----------------------+--------+----------+----------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> delimiter //
+MySQL [te3166db]> create trigger triggerman
+    -> after insert on Student2
+    -> for each row
+    -> begin
+    -> ;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 4
+MySQL [te3166db]> create trigger clean_student before update on Student2
+    -> for each row
+    -> begin
+    -> if Student2.status = 'A'
+    -> then
+    -> insert into Alumni2 values (Student2.rolllNumber, Studetn2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status); 
+    -> end if;
+    -> delete from Student2 where status='A';
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.07 sec)
+
+MySQL [te3166db]> select * from Student2;
+    -> //
++------------+-----------------+-------------------+--------+------------+--------+
+| rollNumber | name            | date_of_admission | branch | percentage | status |
++------------+-----------------+-------------------+--------+------------+--------+
+|        100 | Sam K           | 2015-07-19        | COMP   |         67 | P      |
+|        101 | Robert          | 2015-09-19        | COMP   |         72 | A      |
+|        102 | Sagar           | 2015-04-21        | IT     |         72 | A      |
+|        103 | Alice           | 2013-07-22        | EnTC   |         62 | P      |
+|        104 | James Bond      | 2017-09-02        | EnTC   |         69 | A      |
+|        105 | Sherlock Holmes | 2017-10-02        | COMP   |         79 | P      |
+|        106 | Trigger Man     | 2017-08-13        | COMP   |         54 | A      |
+|        107 | Trig Mn         | 2007-04-13        | EnTC   |         59 | A      |
++------------+-----------------+-------------------+--------+------------+--------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> delimiter ;
+MySQL [te3166db]> select * from Alumni2;
+Empty set (0.00 sec)
+
+MySQL [te3166db]> delimiter //
+MySQL [te3166db]> create trigger clean_student before delete on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Studetn2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+ERROR 1359 (HY000): Trigger already exists
+MySQL [te3166db]> create trigger clean_student2 before delete on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Studetn2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+Query OK, 0 rows affected (0.07 sec)
+
+MySQL [te3166db]> select * from Student2;
+    -> //
++------------+-----------------+-------------------+--------+------------+--------+
+| rollNumber | name            | date_of_admission | branch | percentage | status |
++------------+-----------------+-------------------+--------+------------+--------+
+|        100 | Sam K           | 2015-07-19        | COMP   |         67 | P      |
+|        101 | Robert          | 2015-09-19        | COMP   |         72 | A      |
+|        102 | Sagar           | 2015-04-21        | IT     |         72 | A      |
+|        103 | Alice           | 2013-07-22        | EnTC   |         62 | P      |
+|        104 | James Bond      | 2017-09-02        | EnTC   |         69 | A      |
+|        105 | Sherlock Holmes | 2017-10-02        | COMP   |         79 | P      |
+|        106 | Trigger Man     | 2017-08-13        | COMP   |         54 | A      |
+|        107 | Trig Mn         | 2007-04-13        | EnTC   |         59 | A      |
++------------+-----------------+-------------------+--------+------------+--------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> delimiter ;
+MySQL [te3166db]> select * from Alumni2;
+Empty set (0.00 sec)
+
+MySQL [te3166db]> delete from Student2 where rollNumber=100;
+ERROR 1109 (42S02): Unknown table 'Student2' in where clause
+MySQL [te3166db]> select * from Student2;
++------------+-----------------+-------------------+--------+------------+--------+
+| rollNumber | name            | date_of_admission | branch | percentage | status |
++------------+-----------------+-------------------+--------+------------+--------+
+|        100 | Sam K           | 2015-07-19        | COMP   |         67 | P      |
+|        101 | Robert          | 2015-09-19        | COMP   |         72 | A      |
+|        102 | Sagar           | 2015-04-21        | IT     |         72 | A      |
+|        103 | Alice           | 2013-07-22        | EnTC   |         62 | P      |
+|        104 | James Bond      | 2017-09-02        | EnTC   |         69 | A      |
+|        105 | Sherlock Holmes | 2017-10-02        | COMP   |         79 | P      |
+|        106 | Trigger Man     | 2017-08-13        | COMP   |         54 | A      |
+|        107 | Trig Mn         | 2007-04-13        | EnTC   |         59 | A      |
++------------+-----------------+-------------------+--------+------------+--------+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> delete from Student2 where rollNumber=100;
+ERROR 1109 (42S02): Unknown table 'Student2' in where clause
+MySQL [te3166db]> delete from Student2 where Student2.rollNumber=100;
+ERROR 1109 (42S02): Unknown table 'Student2' in where clause
+MySQL [te3166db]> delete * from Student2 where Student2.rollNumber=100;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '* from Student2 where Student2.rollNumber=100' at line 1
+MySQL [te3166db]> delete * from Student2 where rollNumber=100;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '* from Student2 where rollNumber=100' at line 1
+MySQL [te3166db]> delete from Student2 where rollNumber=100;
+ERROR 1109 (42S02): Unknown table 'Student2' in where clause
+MySQL [te3166db]> delimiter //
+MySQL [te3166db]> create trigger clean_student3 before insert on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Studetn2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+Query OK, 0 rows affected (0.10 sec)
+
+MySQL [te3166db]> create trigger clean_student4 before insert on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+ERROR 1235 (42000): This version of MySQL doesn't yet support 'multiple triggers with the same action time and event for one table'
+MySQL [te3166db]> replace trigger clean_student3 before insert on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'trigger clean_student3 before insert on Student2 for each row begin if Student2.' at line 1
+MySQL [te3166db]> create trigger clean_student4 after insert on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+ERROR 1235 (42000): This version of MySQL doesn't yet support 'multiple triggers with the same action time and event for one table'
+MySQL [te3166db]> drop clean_trigger2
+    -> ;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'clean_trigger2' at line 1
+MySQL [te3166db]> drop clean_student2//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'clean_student2' at line 1
+MySQL [te3166db]> drop clean_student2;//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'clean_student2' at line 1
+MySQL [te3166db]> drop trigger clean_student2;//
+Query OK, 0 rows affected (0.05 sec)
+
+MySQL [te3166db]> drop trigger clean_student3;//
+Query OK, 0 rows affected (0.06 sec)
+
+MySQL [te3166db]> drop trigger clean_student4;//
+ERROR 1360 (HY000): Trigger does not exist
+MySQL [te3166db]> create trigger clean_student4 after insert on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+ERROR 1235 (42000): This version of MySQL doesn't yet support 'multiple triggers with the same action time and event for one table'
+MySQL [te3166db]> create trigger clean_student4 after insert on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+ERROR 1235 (42000): This version of MySQL doesn't yet support 'multiple triggers with the same action time and event for one table'
+MySQL [te3166db]> create trigger clean_student4 after delete on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+Query OK, 0 rows affected (0.07 sec)
+
+MySQL [te3166db]> delete from Student2 where rollNumber=100;
+    -> //
+ERROR 1109 (42S02): Unknown table 'Student2' in where clause
+MySQL [te3166db]> create trigger clean_student2 after insert on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+ERROR 1235 (42000): This version of MySQL doesn't yet support 'multiple triggers with the same action time and event for one table'
+MySQL [te3166db]> create trigger clean_student2 before insert on Student2 for each row begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end;//
+Query OK, 0 rows affected (0.09 sec)
+
+MySQL [te3166db]> describe Student2;
+    -> //
++-------------------+-------------+------+-----+---------+----------------+
+| Field             | Type        | Null | Key | Default | Extra          |
++-------------------+-------------+------+-----+---------+----------------+
+| rollNumber        | int(11)     | NO   | PRI | NULL    | auto_increment |
+| name              | varchar(30) | NO   |     | NULL    |                |
+| date_of_admission | date        | NO   |     | NULL    |                |
+| branch            | varchar(6)  | NO   |     | NULL    |                |
+| percentage        | int(11)     | NO   |     | NULL    |                |
+| status            | varchar(1)  | YES  |     | NULL    |                |
++-------------------+-------------+------+-----+---------+----------------+
+6 rows in set (0.01 sec)
+
+MySQL [te3166db]> delimiter ;
+MySQL [te3166db]> insert into Student2 values (110, 'Kol', '1998-09-30', 'COMP', 75, 'A');
+ERROR 1109 (42S02): Unknown table 'Student2' in field list
+MySQL [te3166db]> drop trigger clean_student2;//
+Query OK, 0 rows affected (0.05 sec)
+
+    -> insert into Student2 values (110, 'Kol', '1998-09-30', 'COMP', 75, 'A');
+[1]+  Stopped                 mysql -h 10.10.14.2 -u te3166 -p
+[TE1@localhost ~]$ mysql -h 10.10.14.2 -u te3166 -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 34
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> insert into Student2 values (110, 'Kol', '1998-09-30', 'COMP', 75, 'A');
+Query OK, 1 row affected (0.06 sec)
+
+MySQL [te3166db]> select * from Student2;
++------------+-----------------+-------------------+--------+------------+--------+
+| rollNumber | name            | date_of_admission | branch | percentage | status |
++------------+-----------------+-------------------+--------+------------+--------+
+|        100 | Sam K           | 2015-07-19        | COMP   |         67 | P      |
+|        101 | Robert          | 2015-09-19        | COMP   |         72 | A      |
+|        102 | Sagar           | 2015-04-21        | IT     |         72 | A      |
+|        103 | Alice           | 2013-07-22        | EnTC   |         62 | P      |
+|        104 | James Bond      | 2017-09-02        | EnTC   |         69 | A      |
+|        105 | Sherlock Holmes | 2017-10-02        | COMP   |         79 | P      |
+|        106 | Trigger Man     | 2017-08-13        | COMP   |         54 | A      |
+|        107 | Trig Mn         | 2007-04-13        | EnTC   |         59 | A      |
+|        110 | Kol             | 1998-09-30        | COMP   |         75 | A      |
++------------+-----------------+-------------------+--------+------------+--------+
+9 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from Alumni2;
+Empty set (0.01 sec)
+
+MySQL [te3166db]> create trigger delete_alumni
+    -> before insert on Student2
+    -> FOR EACH ROW
+    -> if Student2.status='A'
+    -> then
+    -> insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 6
+MySQL [te3166db]> delimiter //
+MySQL [te3166db]> create trigger delete_alumni before insert on Student2 FOR EACH ROW if Student2.status='A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);end if;delete from Student2 where Student2.status='A';end;// 
+Query OK, 0 rows affected (0.07 sec)
+
+ERROR 1109 (42S02): Unknown table 'Student2' in where clause
+MySQL [te3166db]> select * from Student2;
+    -> //
++------------+-----------------+-------------------+--------+------------+--------+
+| rollNumber | name            | date_of_admission | branch | percentage | status |
++------------+-----------------+-------------------+--------+------------+--------+
+|        100 | Sam K           | 2015-07-19        | COMP   |         67 | P      |
+|        101 | Robert          | 2015-09-19        | COMP   |         72 | A      |
+|        102 | Sagar           | 2015-04-21        | IT     |         72 | A      |
+|        103 | Alice           | 2013-07-22        | EnTC   |         62 | P      |
+|        104 | James Bond      | 2017-09-02        | EnTC   |         69 | A      |
+|        105 | Sherlock Holmes | 2017-10-02        | COMP   |         79 | P      |
+|        106 | Trigger Man     | 2017-08-13        | COMP   |         54 | A      |
+|        107 | Trig Mn         | 2007-04-13        | EnTC   |         59 | A      |
+|        110 | Kol             | 1998-09-30        | COMP   |         75 | A      |
++------------+-----------------+-------------------+--------+------------+--------+
+9 rows in set (0.00 sec)
+
+MySQL [te3166db]> insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);
+    -> /
+    -> /
+    -> //
+ERROR 1054 (42S22): Unknown column 'Student2.rolllNumber' in 'field list'
+MySQL [te3166db]> show triggers;
+    -> //
++----------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+| Trigger              | Event  | Table    | Statement                                                                                                                                                                                                                                    | Timing | Created | sql_mode | Definer  | character_set_client | collation_connection | Database Collation |
++----------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+| delete_alumni        | INSERT | Student2 | if Student2.status='A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);end if                                                       | BEFORE | NULL    |          | te3166@% | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
+| count_total_students | INSERT | Student2 | update totalStudents set totalStudents.count = totalStudents.count+1                                                                                                                                                                         | AFTER  | NULL    |          | te3166@% | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
+| clean_student        | UPDATE | Student2 | begin
+if Student2.status = 'A'
+then
+insert into Alumni2 values (Student2.rolllNumber, Studetn2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status); 
+end if;
+delete from Student2 where status='A';
+end | BEFORE | NULL    |          | te3166@% | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
+| clean_student4       | DELETE | Student2 | begin if Student2.status = 'A' then insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);  end if; delete from Student2 where status='A'; end | AFTER  | NULL    |          | te3166@% | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
++----------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> delete trigger delete_alumni;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'trigger delete_alumni' at line 1
+MySQL [te3166db]> delete trigger delete_alumni;//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'trigger delete_alumni' at line 1
+MySQL [te3166db]> drop trigger delete_alumni;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+MySQL [te3166db]> 
+MySQL [te3166db]> drop trigger clean_student4;//
+Query OK, 0 rows affected (0.04 sec)
+
+MySQL [te3166db]> show triggers;
+    -> //
++----------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+| Trigger              | Event  | Table    | Statement                                                                                                                                                                                                                                    | Timing | Created | sql_mode | Definer  | character_set_client | collation_connection | Database Collation |
++----------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+| count_total_students | INSERT | Student2 | update totalStudents set totalStudents.count = totalStudents.count+1                                                                                                                                                                         | AFTER  | NULL    |          | te3166@% | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
+| clean_student        | UPDATE | Student2 | begin
+if Student2.status = 'A'
+then
+insert into Alumni2 values (Student2.rolllNumber, Studetn2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status); 
+end if;
+delete from Student2 where status='A';
+end | BEFORE | NULL    |          | te3166@% | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
++----------------------+--------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> drip trigger clean_student;
+    -> 
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'drip trigger clean_student' at line 1
+MySQL [te3166db]> drop trigger clean_student;//
+Query OK, 0 rows affected (0.04 sec)
+
+MySQL [te3166db]> 
+MySQL [te3166db]> show triggers;
+    -> //
++----------------------+--------+----------+----------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+| Trigger              | Event  | Table    | Statement                                                            | Timing | Created | sql_mode | Definer  | character_set_client | collation_connection | Database Collation |
++----------------------+--------+----------+----------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+| count_total_students | INSERT | Student2 | update totalStudents set totalStudents.count = totalStudents.count+1 | AFTER  | NULL    |          | te3166@% | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
++----------------------+--------+----------+----------------------------------------------------------------------+--------+---------+----------+----------+----------------------+----------------------+--------------------+
+1 row in set (0.01 sec)
+
+MySQL [te3166db]> create trigger clean_student
+    -> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -> ;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+MySQL [te3166db]> create trigger clean_student
+    -> before insert on Student2
+    -> for each row
+    -> insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);//
+Query OK, 0 rows affected (0.07 sec)
+
+MySQL [te3166db]> insert into Student2 (111, 'rajat', '2018-09-12', 'COMP
+    '> ', 90, 'P');
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '111, 'rajat', '2018-09-12', 'COMP
+', 90, 'P')' at line 1
+MySQL [te3166db]> insert into Student2 (111, 'rajat', '2018-09-12', 'COMP', 90, 'P');//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '111, 'rajat', '2018-09-12', 'COMP', 90, 'P')' at line 1
+MySQL [te3166db]> insert into Student2 values (113, 'rajat', '2018-09-12', 'COMP', 90, 'P');//
+ERROR 1054 (42S22): Unknown column 'Student2.rolllNumber' in 'field list'
+MySQL [te3166db]> drop trigger clean_student;
+    -> //
+Query OK, 0 rows affected (0.04 sec)
+
+MySQL [te3166db]> create trigger clean_student
+    -> after delete on Student2
+    -> for each row
+    -> begin
+    -> if NEW.status='A' then
+    -> insert into //
+ERROR 1363 (HY000): There is no NEW row in on DELETE trigger
+MySQL [te3166db]> create trigger clean_student
+    -> after delete on Student2
+    -> for each row
+    -> begin
+    -> if Student2.status='A' then
+    -> insert into Alumni2 values (Student2.rolllNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status);
+    -> end if;
+    -> end;//
+Query OK, 0 rows affected (0.14 sec)
+
+MySQL [te3166db]> delete from Student2 where rollNumber=100;
+    -> //
+ERROR 1109 (42S02): Unknown table 'Student2' in where clause
+MySQL [te3166db]> drop trigger clean_student
+    -> ;
+    -> //
+Query OK, 0 rows affected (0.04 sec)
+
+MySQL [te3166db]> create trigger clean_student after delete on Student2 for each row begin if Student2.status='A' then insert into Alumni2 values (Student2.rollNumber, Student2.name, Student2.date_of_admission, Student2.branch, Student2.percentage, Student2.status); end if; end;//
+Query OK, 0 rows affected (0.07 sec)
+
+MySQL [te3166db]> delete from Student2 where rollNumber=100;//
+ERROR 1109 (42S02): Unknown table 'Student2' in where clause
+MySQL [te3166db]> 
+
+

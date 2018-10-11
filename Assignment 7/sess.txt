@@ -1,0 +1,412 @@
+[TE1@localhost ~]$ su
+Password:
+[root@localhost TE1]# /etc/init.d/oracle-xe restart
+Restarting oracle-xe (via systemctl):                      [  OK  ]
+[root@localhost TE1]# cd /u01/app/oracle/product/11.2.0/xe/bin
+[root@localhost bin]# . ./oracle_env.sh
+[root@localhost bin]# sqlplus system
+
+SQL*Plus: Release 11.2.0.2.0 Production on Wed Aug 1 13:34:45 2018
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+Enter password:
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> CREATE TABLE customers(customer_id number(10) NOT NULL, customer_name varchar2(50) NOT NULL, total_purchase number(4) NOT NULL);
+
+Table created.
+
+SQL> CREATE TABLE category(customer_id number(10) NOT NULL, customer_name varchar2(50) NOT NULL, class number(2) NOT NULL);
+CREATE TABLE category(customer_id number(10) NOT NULL, customer_name varchar2(50) NOT NULL, class number(2) NOT NULL)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> CREATE TABLE category(customer_id number(10) NOT NULL, customer_name varchar2(50) NOT NULL, class number(2) NOT NULL);
+CREATE TABLE category(customer_id number(10) NOT NULL, customer_name varchar2(50) NOT NULL, class number(2) NOT NULL)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> CREATE TABLE cust_category(customer_id number(10) NOT NULL, customer_name varchar2(50) NOT NULL, class number(2) NOT NULL);
+
+Table created.
+
+SQL> drop table cust_category;
+
+Table dropped.
+
+SQL> CREATE TABLE cust_category(customer_id number(10) NOT NULL, customer_name varchar2(50) NOT NULL, cust_class varchar2(20) NOT NULL);
+
+Table created.
+
+SQL> drop table customers;
+
+Table dropped.
+
+SQL> CREATE TABLE customers(customer_id number(10) NOT NULL, customer_name varchar2(50) NOT NULL, total_purchase number(6) NOT NULL);
+
+Table created.
+
+SQL> INSERT INTO customers (customer_id, customer_name, total_purchase) values (1, "DEV", 19900);
+INSERT INTO customers (customer_id, customer_name, total_purchase) values (1, "DEV", 19900)
+                                                                              *
+ERROR at line 1:
+ORA-00984: column not allowed here
+
+
+SQL> INSERT INTO customers (customer_id, customer_name, total_purchase) values (1, 'DEV', 19900);
+
+1 row created.
+
+SQL> INSERT INTO customers (customer_id, customer_name, total_purchase) values (2, 'VED', 99900);
+
+1 row created.
+
+SQL> INSERT INTO customers (customer_id, customer_name, total_purchase) values (3, 'RAM', 199900);
+
+1 row created.
+
+SQL> INSERT INTO customers (customer_id, customer_name, total_purchase) values (4, 'TOM', 1900);
+
+1 row created.
+
+SQL> INSERT INTO customers (customer_id, customer_name, total_purchase) values (5, 'LUCY', 30000);
+
+1 row created.
+
+SQL> SELECT * FROM customers;
+
+CUSTOMER_ID CUSTOMER_NAME                                      TOTAL_PURCHASE
+----------- -------------------------------------------------- --------------
+          1 DEV                                                         19900
+          2 VED                                                         99900
+          3 RAM                                                        199900
+          4 TOM                                                          1900
+          5 LUCY                                                        30000
+
+SQL> update customers set total_purchase = 17000 where customer_id = 2;
+
+1 row updated.
+
+SQL> update customers set total purchase = 18700 where customer_id = 3;
+update customers set total purchase = 18700 where customer_id = 3
+                           *
+ERROR at line 1:
+ORA-00927: missing equal sign
+
+
+SQL> update customers set total_purchase = 18700 where customer_id=3;
+
+1 row updated.
+
+SQL> SELECT * FROM customers;
+
+CUSTOMER_ID CUSTOMER_NAME                                      TOTAL_PURCHASE
+----------- -------------------------------------------------- --------------
+          1 DEV                                                         19900
+          2 VED                                                         17000
+          3 RAM                                                         18700
+          4 TOM                                                          1900
+          5 LUCY                                                        30000
+
+SQL> update customers set total_purchase=12000 where customer_id=5;
+
+1 row updated.
+
+SQL> select * from customers;
+
+CUSTOMER_ID CUSTOMER_NAME                                      TOTAL_PURCHASE
+----------- -------------------------------------------------- --------------
+          1 DEV                                                         19900
+          2 VED                                                         17000
+          3 RAM                                                         18700
+          4 TOM                                                          1900
+          5 LUCY                                                        12000
+
+SQL> update customers set total_purchase=7000 where customer_id=4;
+
+1 row updated.
+
+SQL> select * from customers;
+
+CUSTOMER_ID CUSTOMER_NAME                                      TOTAL_PURCHASE
+----------- -------------------------------------------------- --------------
+          1 DEV                                                         19900
+          2 VED                                                         17000
+          3 RAM                                                         18700
+          4 TOM                                                          7000
+          5 LUCY                                                        12000
+
+SQL> update customers set total_purchase=3000 where customer_id = 2;
+
+1 row updated.
+
+SQL> select * from customers;
+
+CUSTOMER_ID CUSTOMER_NAME                                      TOTAL_PURCHASE
+----------- -------------------------------------------------- --------------
+          1 DEV                                                         19900
+          2 VED                                                          3000
+          3 RAM                                                         18700
+          4 TOM                                                          7000
+          5 LUCY                                                        12000
+
+SQL> CREATE OR REPLACE PROCEDURE proc_grade1(default null) as
+  2  begin
+  3  for person in (select customer_id, customer_name, total_purchase from customers)
+  4  loop
+  5  dbms_output.put_line(person.customer_id||' '||person.customer_name||' '||person.total_purchase);
+  6  end loop;
+  7  end proc_grade1;
+  8  /
+
+Warning: Procedure created with compilation errors.
+
+SQL> begin
+  2  proc_grade1;
+  3  end;
+  4  /
+proc_grade1;
+*
+ERROR at line 2:
+ORA-06550: line 2, column 1:
+PLS-00905: object SYSTEM.PROC_GRADE1 is invalid
+ORA-06550: line 2, column 1:
+PL/SQL: Statement ignored
+
+
+SQL> drop procedure proc_grade1;
+
+Procedure dropped.
+
+SQL> CREATE PROCEDURE proc_grade1
+  2  as
+  3  begin
+  4  for person in (select customer_id, customer_name, total_purchase from customers)
+  5     loop
+  6     dbms_output.put_line(person.customer_id||' '||person.customer_name||' 'person.total_purchase);
+  7     end loop;
+  8  end proc_grade1;
+  9  /
+
+Warning: Procedure created with compilation errors.
+
+SQL> begin
+  2     proc_grade1;
+  3  end;
+  4  /
+        proc_grade1;
+        *
+ERROR at line 2:
+ORA-06550: line 2, column 2:
+PLS-00905: object SYSTEM.PROC_GRADE1 is invalid
+ORA-06550: line 2, column 2:
+PL/SQL: Statement ignored
+
+
+SQL> execute proc_grade1;
+BEGIN proc_grade1; END;
+
+      *
+ERROR at line 1:
+ORA-06550: line 1, column 7:
+PLS-00905: object SYSTEM.PROC_GRADE1 is invalid
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+
+
+SQL> show errors proc_grade1;
+Usage: SHOW ERRORS [{ FUNCTION | PROCEDURE | PACKAGE |
+   PACKAGE BODY | TRIGGER | VIEW
+   | TYPE | TYPE BODY | DIMENSION
+   | JAVA SOURCE | JAVA CLASS } [schema.]name]
+SQL> show errors procedure proc_grade1;
+Errors for PROCEDURE PROC_GRADE1:
+
+LINE/COL ERROR
+-------- -----------------------------------------------------------------
+6/73     PLS-00103: Encountered the symbol "PERSON" when expecting one of
+         the following:
+         ) , * & = - + < / > at in is mod remainder not rem =>
+         <an exponent (**)> <> or != or ~= >= <= <> and or like like2
+         like4 likec as between from using || member submultiset
+         The symbol "," was substituted for "PERSON" to continue.
+
+SQL> drop procedure proc_grade1;
+
+Procedure dropped.
+
+SQL> CREATE PROCEDURE proc_grade
+is
+begin
+for cust in (select customer_id, customer_name, total_purchase from customers)
+    loop
+        if cust.total_purchase<=20000 and cust.total_purchase>=10000 then
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Platinum');
+        elsif cust.total_purchase<10000 and cust.total_purchase>=5000 then
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Gold');
+        else
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Silver');
+        end if;
+    end loop;
+END;
+/  2    3    4    5    6    7    8    9   10   11   12   13   14   15
+CREATE PROCEDURE proc_grade
+                 *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> CREATE PROCEDURE OR REPLACE proc_grade
+is
+begin
+for cust in (select customer_id, customer_name, total_purchase from customers)
+    loop
+        if cust.total_purchase<=20000 and cust.total_purchase>=10000 then
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Platinum');
+        elsif cust.total_purchase<10000 and cust.total_purchase>=5000 then
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Gold');
+        else
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Silver');
+        end if;
+    end loop;
+END;
+/  2    3    4    5    6    7    8    9   10   11   12   13   14   15
+CREATE PROCEDURE OR REPLACE proc_grade
+                 *
+ERROR at line 1:
+ORA-04050: invalid or missing procedure, function, or package name
+
+
+SQL> CREATE OR REPLACE PROCEDURE proc_grade
+is
+begin
+for cust in (select customer_id, customer_name, total_purchase from customers)
+    loop
+        if cust.total_purchase<=20000 and cust.total_purchase>=10000 then
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Platinum');
+        elsif cust.total_purchase<10000 and cust.total_purchase>=5000 then
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Gold');
+        else
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Silver');
+        end if;
+    end loop;
+END;
+/  2    3    4    5    6    7    8    9   10   11   12   13   14   15
+
+Procedure created.
+
+SQL> execute proc_grade;
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from cust_category;
+
+CUSTOMER_ID CUSTOMER_NAME
+----------- --------------------------------------------------
+CUST_CLASS
+--------------------
+          1 DEV
+Platinum
+
+          2 VED
+Silver
+
+          3 RAM
+Platinum
+
+
+CUSTOMER_ID CUSTOMER_NAME
+----------- --------------------------------------------------
+CUST_CLASS
+--------------------
+          4 TOM
+Gold
+
+          5 LUCY
+Platinum
+
+
+SQL> CREATE OR REPLACE PROCEDURE proc_grade
+is
+begin
+for cust in (select customer_id, customer_name, total_purchase from customers)
+    loop
+        if cust.total_purchase<=20000 and cust.total_purchase>=10000 then
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Platinum');
+        elsif cust.total_purchase<10000 and cust.total_purchase>=5000 then
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Gold');
+        else
+            insert into cust_category (customer_id, customer_name, cust_class) values (cust.customer_id, cust.customer_name, 'Silver');
+        end if;
+    end loop;
+end proc_grade;
+/  2    3    4    5    6    7    8    9   10   11   12   13   14   15
+
+Procedure created.
+
+SQL> execute proc_grade;
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from cust_category;
+
+CUSTOMER_ID CUSTOMER_NAME
+----------- --------------------------------------------------
+CUST_CLASS
+--------------------
+          1 DEV
+Platinum
+
+          2 VED
+Silver
+
+          3 RAM
+Platinum
+
+
+CUSTOMER_ID CUSTOMER_NAME
+----------- --------------------------------------------------
+CUST_CLASS
+--------------------
+          4 TOM
+Gold
+
+          5 LUCY
+Platinum
+
+          1 DEV
+Platinum
+
+
+CUSTOMER_ID CUSTOMER_NAME
+----------- --------------------------------------------------
+CUST_CLASS
+--------------------
+          2 VED
+Silver
+
+          3 RAM
+Platinum
+
+          4 TOM
+Gold
+
+
+CUSTOMER_ID CUSTOMER_NAME
+----------- --------------------------------------------------
+CUST_CLASS
+--------------------
+          5 LUCY
+Platinum
+
+
+10 rows selected.
+
+SQL>

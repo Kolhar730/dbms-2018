@@ -1,0 +1,459 @@
+[TE1@localhost ~]$ su
+Password: 
+su: Authentication failure
+[TE1@localhost ~]$ su
+Password: 
+[root@localhost TE1]# mysql -u root -p
+Enter password: 
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2)
+[root@localhost TE1]# mysqlmysql
+bash: mysqlmysql: command not found...
+[root@localhost TE1]# mysql
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2)
+[root@localhost TE1]# ^C
+[root@localhost TE1]# exit
+exit
+[TE1@localhost ~]$ mysql
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2)
+[TE1@localhost ~]$ 
+[TE1@localhost ~]$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[TE1@localhost ~]$ mysql -h 10.10.15.8 -u te3166 -p 
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 12
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| te3166db           |
+| test               |
++--------------------+
+3 rows in set (0.02 sec)
+
+MySQL [(none)]> use information_schema;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [information_schema]> show tables;
++---------------------------------------+
+| Tables_in_information_schema          |
++---------------------------------------+
+| CHARACTER_SETS                        |
+| COLLATIONS                            |
+| COLLATION_CHARACTER_SET_APPLICABILITY |
+| COLUMNS                               |
+| COLUMN_PRIVILEGES                     |
+| ENGINES                               |
+| EVENTS                                |
+| FILES                                 |
+| GLOBAL_STATUS                         |
+| GLOBAL_VARIABLES                      |
+| KEY_COLUMN_USAGE                      |
+| PARAMETERS                            |
+| PARTITIONS                            |
+| PLUGINS                               |
+| PROCESSLIST                           |
+| PROFILING                             |
+| REFERENTIAL_CONSTRAINTS               |
+| ROUTINES                              |
+| SCHEMATA                              |
+| SCHEMA_PRIVILEGES                     |
+| SESSION_STATUS                        |
+| SESSION_VARIABLES                     |
+| STATISTICS                            |
+| TABLES                                |
+| TABLESPACES                           |
+| TABLE_CONSTRAINTS                     |
+| TABLE_PRIVILEGES                      |
+| TRIGGERS                              |
+| USER_PRIVILEGES                       |
+| VIEWS                                 |
+| INNODB_BUFFER_PAGE                    |
+| INNODB_TRX                            |
+| INNODB_BUFFER_POOL_STATS              |
+| INNODB_LOCK_WAITS                     |
+| INNODB_CMPMEM                         |
+| INNODB_CMP                            |
+| INNODB_LOCKS                          |
+| INNODB_CMPMEM_RESET                   |
+| INNODB_CMP_RESET                      |
+| INNODB_BUFFER_PAGE_LRU                |
++---------------------------------------+
+40 rows in set (0.00 sec)
+
+MySQL [information_schema]> select triggers;
+ERROR 1054 (42S22): Unknown column 'triggers' in 'field list'
+MySQL [information_schema]> use te3166
+ERROR 1044 (42000): Access denied for user 'te3166'@'%' to database 'te3166'
+MySQL [information_schema]> Ctrl-C -- exit!
+Aborted
+[TE1@localhost ~]$ mysql -h 10.10.15.8 -u te3166 -p 
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 30
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166
+ERROR 1044 (42000): Access denied for user 'te3166'@'%' to database 'te3166'
+MySQL [(none)]> use te3166db;
+Database changed
+MySQL [te3166db]> 
+MySQL [te3166db]> create table employee_data(emp_id int not null primary key, firstName varchar(255) not null, lastName varchar(255) not null, Address varchar(255), phoneNumber bigint, age int not null);   
+Query OK, 0 rows affected (0.09 sec)
+
+MySQL [te3166db]> show tables;
++--------------------+
+| Tables_in_te3166db |
++--------------------+
+| employee_data      |
++--------------------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select employee_data;
+ERROR 1054 (42S22): Unknown column 'employee_data' in 'field list'
+MySQL [te3166db]> select * from employee_data;
+Empty set (0.00 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (1, Dev, Indra, Pune, 9880932485,45); 
+ERROR 1054 (42S22): Unknown column 'Dev' in 'field list'
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (1, 'Dev', 'Indra', 'Pune', 9880932485,45); 
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> select * from employee_data;
++--------+-----------+----------+---------+-------------+-----+
+| emp_id | firstName | lastName | Address | phoneNumber | age |
++--------+-----------+----------+---------+-------------+-----+
+|      1 | Dev       | Indra    | Pune    |  9880932485 |  45 |
++--------+-----------+----------+---------+-------------+-----+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (2, 'Tom', 'Hanks', 'Pune', 9880932455,20); 
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (2, 'Tom', 'and Jerry', 'Pune', 9883932455,27); 
+ERROR 1062 (23000): Duplicate entry '2' for key 'PRIMARY'
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (3, 'Tom', 'and Jerry', 'Pune', 9883932455,27); 
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> select * from employee_data;
++--------+-----------+-----------+---------+-------------+-----+
+| emp_id | firstName | lastName  | Address | phoneNumber | age |
++--------+-----------+-----------+---------+-------------+-----+
+|      1 | Dev       | Indra     | Pune    |  9880932485 |  45 |
+|      2 | Tom       | Hanks     | Pune    |  9880932455 |  20 |
+|      3 | Tom       | and Jerry | Pune    |  9883932455 |  27 |
++--------+-----------+-----------+---------+-------------+-----+
+3 rows in set (0.01 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (4, 'Sylvester', 'Stallone', 'Chennai', 9883332445,29); 
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (5, 'Robert', 'de Niro', 'Mumbai', 9883332440,56); 
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (6, 'Robert', 'Rukh Khan', 'Mumbai', 9883332441,28); 
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (7, 'Jim', 'Polchinski', 'Chennai', 9883332741,34); 
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (8, 'Jim', 'Tendulkar', 'Chennai', 9883332749,38); 
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> select * from employee_data;
++--------+-----------+------------+---------+-------------+-----+
+| emp_id | firstName | lastName   | Address | phoneNumber | age |
++--------+-----------+------------+---------+-------------+-----+
+|      1 | Dev       | Indra      | Pune    |  9880932485 |  45 |
+|      2 | Tom       | Hanks      | Pune    |  9880932455 |  20 |
+|      3 | Tom       | and Jerry  | Pune    |  9883932455 |  27 |
+|      4 | Sylvester | Stallone   | Chennai |  9883332445 |  29 |
+|      5 | Robert    | de Niro    | Mumbai  |  9883332440 |  56 |
+|      6 | Robert    | Rukh Khan  | Mumbai  |  9883332441 |  28 |
+|      7 | Jim       | Polchinski | Chennai |  9883332741 |  34 |
+|      8 | Jim       | Tendulkar  | Chennai |  9883332749 |  38 |
++--------+-----------+------------+---------+-------------+-----+
+8 rows in set (0.00 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (9, 'Rahul', 'Dravid', 'Bangalore', 9883332748,67); 
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (10, 'Ral', 'Myse', 'Bangalore', 9883332744,44); 
+Query OK, 1 row affected (0.08 sec)
+
+MySQL [te3166db]> select * from employee_data;
++--------+-----------+------------+-----------+-------------+-----+
+| emp_id | firstName | lastName   | Address   | phoneNumber | age |
++--------+-----------+------------+-----------+-------------+-----+
+|      1 | Dev       | Indra      | Pune      |  9880932485 |  45 |
+|      2 | Tom       | Hanks      | Pune      |  9880932455 |  20 |
+|      3 | Tom       | and Jerry  | Pune      |  9883932455 |  27 |
+|      4 | Sylvester | Stallone   | Chennai   |  9883332445 |  29 |
+|      5 | Robert    | de Niro    | Mumbai    |  9883332440 |  56 |
+|      6 | Robert    | Rukh Khan  | Mumbai    |  9883332441 |  28 |
+|      7 | Jim       | Polchinski | Chennai   |  9883332741 |  34 |
+|      8 | Jim       | Tendulkar  | Chennai   |  9883332749 |  38 |
+|      9 | Rahul     | Dravid     | Bangalore |  9883332748 |  67 |
+|     10 | Ral       | Myse       | Bangalore |  9883332744 |  44 |
++--------+-----------+------------+-----------+-------------+-----+
+10 rows in set (0.01 sec)
+
+MySQL [te3166db]> select emp_id, firstName, lastName from employee_data where firstName="Tom";
++--------+-----------+-----------+
+| emp_id | firstName | lastName  |
++--------+-----------+-----------+
+|      2 | Tom       | Hanks     |
+|      3 | Tom       | and Jerry |
++--------+-----------+-----------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> select emp_id, lastName from employee_data where firstName="Tom";
++--------+-----------+
+| emp_id | lastName  |
++--------+-----------+
+|      2 | Hanks     |
+|      3 | and Jerry |
++--------+-----------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> select emp_id, lastName from employee_data where Address="Pune";
++--------+-----------+
+| emp_id | lastName  |
++--------+-----------+
+|      1 | Indra     |
+|      2 | Hanks     |
+|      3 | and Jerry |
++--------+-----------+
+3 rows in set (0.00 sec)
+
+MySQL [te3166db]> select emp_id,firstName, lastName from employee_data where age >=34 AND age <= 90;
++--------+-----------+------------+
+| emp_id | firstName | lastName   |
++--------+-----------+------------+
+|      1 | Dev       | Indra      |
+|      5 | Robert    | de Niro    |
+|      7 | Jim       | Polchinski |
+|      8 | Jim       | Tendulkar  |
+|      9 | Rahul     | Dravid     |
+|     10 | Ral       | Myse       |
++--------+-----------+------------+
+6 rows in set (0.00 sec)
+
+MySQL [te3166db]> select emp_id,firstName, lastName from employee_data group by firstName;
++--------+-----------+------------+
+| emp_id | firstName | lastName   |
++--------+-----------+------------+
+|      1 | Dev       | Indra      |
+|      7 | Jim       | Polchinski |
+|      9 | Rahul     | Dravid     |
+|     10 | Ral       | Myse       |
+|      5 | Robert    | de Niro    |
+|      4 | Sylvester | Stallone   |
+|      2 | Tom       | Hanks      |
++--------+-----------+------------+
+7 rows in set (0.00 sec)
+
+MySQL [te3166db]> select emp_id,firstName, lastName from employee_data group by emp_id;
++--------+-----------+------------+
+| emp_id | firstName | lastName   |
++--------+-----------+------------+
+|      1 | Dev       | Indra      |
+|      2 | Tom       | Hanks      |
+|      3 | Tom       | and Jerry  |
+|      4 | Sylvester | Stallone   |
+|      5 | Robert    | de Niro    |
+|      6 | Robert    | Rukh Khan  |
+|      7 | Jim       | Polchinski |
+|      8 | Jim       | Tendulkar  |
+|      9 | Rahul     | Dravid     |
+|     10 | Ral       | Myse       |
++--------+-----------+------------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select min(age) from employee_data
+    -> ;
++----------+
+| min(age) |
++----------+
+|       20 |
++----------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select min(age), emp_id from employee_data;
++----------+--------+
+| min(age) | emp_id |
++----------+--------+
+|       20 |      1 |
++----------+--------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select count(firstName) from employee_data where firstName="Robert";
++------------------+
+| count(firstName) |
++------------------+
+|                2 |
++------------------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select avg(age) from employee_data;
++----------+
+| avg(age) |
++----------+
+|  38.8000 |
++----------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> select emp_id, firstName, lastName from employee_data group by (Address);
++--------+-----------+----------+
+| emp_id | firstName | lastName |
++--------+-----------+----------+
+|      9 | Rahul     | Dravid   |
+|      4 | Sylvester | Stallone |
+|      5 | Robert    | de Niro  |
+|      1 | Dev       | Indra    |
++--------+-----------+----------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from employee_data order by age desc and order by firstName asc;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'and order by firstName asc' at line 1
+MySQL [te3166db]> select * from employee_data order by age desc, firstName asc;
++--------+-----------+------------+-----------+-------------+-----+
+| emp_id | firstName | lastName   | Address   | phoneNumber | age |
++--------+-----------+------------+-----------+-------------+-----+
+|      9 | Rahul     | Dravid     | Bangalore |  9883332748 |  67 |
+|      5 | Robert    | de Niro    | Mumbai    |  9883332440 |  56 |
+|      1 | Dev       | Indra      | Pune      |  9880932485 |  45 |
+|     10 | Ral       | Myse       | Bangalore |  9883332744 |  44 |
+|      8 | Jim       | Tendulkar  | Chennai   |  9883332749 |  38 |
+|      7 | Jim       | Polchinski | Chennai   |  9883332741 |  34 |
+|      4 | Sylvester | Stallone   | Chennai   |  9883332445 |  29 |
+|      6 | Robert    | Rukh Khan  | Mumbai    |  9883332441 |  28 |
+|      3 | Tom       | and Jerry  | Pune      |  9883932455 |  27 |
+|      2 | Tom       | Hanks      | Pune      |  9880932455 |  20 |
++--------+-----------+------------+-----------+-------------+-----+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from employee_data;
++--------+-----------+------------+-----------+-------------+-----+
+| emp_id | firstName | lastName   | Address   | phoneNumber | age |
++--------+-----------+------------+-----------+-------------+-----+
+|      1 | Dev       | Indra      | Pune      |  9880932485 |  45 |
+|      2 | Tom       | Hanks      | Pune      |  9880932455 |  20 |
+|      3 | Tom       | and Jerry  | Pune      |  9883932455 |  27 |
+|      4 | Sylvester | Stallone   | Chennai   |  9883332445 |  29 |
+|      5 | Robert    | de Niro    | Mumbai    |  9883332440 |  56 |
+|      6 | Robert    | Rukh Khan  | Mumbai    |  9883332441 |  28 |
+|      7 | Jim       | Polchinski | Chennai   |  9883332741 |  34 |
+|      8 | Jim       | Tendulkar  | Chennai   |  9883332749 |  38 |
+|      9 | Rahul     | Dravid     | Bangalore |  9883332748 |  67 |
+|     10 | Ral       | Myse       | Bangalore |  9883332744 |  44 |
++--------+-----------+------------+-----------+-------------+-----+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> 
+MySQL [te3166db]> create table emp_from_csv_trial(EMP_ID smallint primary key not null, FIRSTNAME not null varchar(255), LASTNAME not null varchar(255));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'not null varchar(255), LASTNAME not null varchar(255))' at line 1
+MySQL [te3166db]> create table emp_from_csv_trial(EMP_ID smallint primary key not null, FIRSTNAME varchar(255) not null, LASTNAME varchar(255) not null);
+Query OK, 0 rows affected (0.09 sec)
+
+MySQL [te3166db]> show tables;
++--------------------+
+| Tables_in_te3166db |
++--------------------+
+| emp_from_csv_trial |
+| employee_data      |
++--------------------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> load data infile '/home/TE1/Documents/trial.csv' into table emp_from_csv_trial fields terminated by ',' enclosed by '"' lines terminated by '\n' ignore 1 rows; 
+ERROR 1045 (28000): Access denied for user 'te3166'@'%' (using password: YES)
+MySQL [te3166db]> load data infile '/home/TE1/Documents/trial.csv' into table emp_from_csv_trial fields terminated by ',' lines terminated by '\n' ignore 1 rows; 
+ERROR 1045 (28000): Access denied for user 'te3166'@'%' (using password: YES)
+MySQL [te3166db]> load data infile '/home/TE1/Documents/trial.csv' into table emp_from_csv_trial fields terminated by ',' lines terminated by '\n' ignore 1 rows; 
+ERROR 1045 (28000): Access denied for user 'te3166'@'%' (using password: YES)
+MySQL [te3166db]> load data infile '/home/TE1/Documents/trial.csv' into table emp_from_csv_trial fields terminated by ',' lines terminated by '\n' ignore 1 rows; 
+ERROR 1045 (28000): Access denied for user 'te3166'@'%' (using password: YES)
+MySQL [te3166db]> 
+
+
+
+
+
+
+
+MySQL [te3166db]> select firstName from employee_data where firstName like 'T%';
++-----------+
+| firstName |
++-----------+
+| Tom       |
+| Tom       |
++-----------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> select emp_id, firstName from employee_data where phoneNumber like '988%';
++--------+-----------+
+| emp_id | firstName |
++--------+-----------+
+|      1 | Dev       |
+|      2 | Tom       |
+|      3 | Tom       |
+|      4 | Sylvester |
+|      5 | Robert    |
+|      6 | Robert    |
+|      7 | Jim       |
+|      8 | Jim       |
+|      9 | Rahul     |
+|     10 | Ral       |
++--------+-----------+
+10 rows in set (0.00 sec)
+
+MySQL [te3166db]> alter table employee_data modify column emp_id smallint not null;
+Query OK, 10 rows affected (0.25 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MySQL [te3166db]> insert into employee_data(emp_id, firstName, lastName, Address, phoneNumber, age) values (9, 'Ra3ul', 'Drav3d', 'Bangalore', 9883332738,65); 
+ERROR 1062 (23000): Duplicate entry '9' for key 'PRIMARY'
+MySQL [te3166db]> alter table employee_data add column dateJoined varchar(255) getdate();ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'getdate()' at line 1
+MySQL [te3166db]> alter table employee_data add column dateJoined  getdate();
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'getdate()' at line 1
+MySQL [te3166db]> alter table employee_data add column dateJoined GETDATE();
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'GETDATE()' at line 1
+MySQL [te3166db]> alter table employee_data add column dateJoined date DEFAULT GETDATE();
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'GETDATE()' at line 1
+MySQL [te3166db]> 
+

@@ -1,0 +1,749 @@
+[TE1@localhost ~]$ su
+Password:
+[root@localhost TE1]# /etc/init.d/oracle-xe restart
+Restarting oracle-xe (via systemctl):                      [  OK  ]
+[root@localhost TE1]# cd /u01/app/oracle/product/11.2.0/xe/bin
+[root@localhost bin]#  . ./oracle_env.sh
+[root@localhost bin]# sqlplus system
+
+SQL*Plus: Release 11.2.0.2.0 Production on Thu Aug 2 13:07:25 2018
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+Enter password:
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> CREATE TABLE cust_customer (cust_id number(4) not null,name varchar2(20) not null, date_of_payment date not null, name_of_scheme varchar(10) not null, status varchar(3) not null);
+
+Table created.
+
+SQL> CREATE TABLE cust_fine (cust_id number(4) not null, cur_date date not null, amount number(5) not null);
+
+Table created.
+
+SQL> INSERT INTO cust_customer (cust_id, name, date_of_payment, name_of_scheme, status) values (1, 'Sam K', '12-JUL-2018', '15 Days', 'NP');
+
+1 row created.
+
+SQL> INSERT INTO cust_customer (cust_id, name, date_of_payment, name_of_scheme, status) values (2, 'Dev B', '27-JUL-2018', '30 Days', 'P');
+
+1 row created.
+
+SQL> INSERT INTO cust_customer (cust_id, name, date_of_payment, name_of_scheme, status) values (3, 'Rajat S', '19-JUL-2018', '15 Days', 'NP');
+
+1 row created.
+
+SQL> select * from cust_customer;
+
+   CUST_ID NAME                 DATE_OF_PAYMENT    NAME_OF_SC STA
+---------- -------------------- ------------------ ---------- ---
+         1 Sam K                12-JUL-18          15 Days    NP
+         2 Dev B                27-JUL-18          30 Days    P
+         3 Rajat S              19-JUL-18          15 Days    NP
+
+SQL> select * from cust_fine
+  2  ;
+
+no rows selected
+
+SQL> begin
+  2  sysdate;
+  3  end;
+  4  /
+sysdate;
+*
+ERROR at line 2:
+ORA-06550: line 2, column 1:
+PLS-00221: 'SYSDATE' is not a procedure or is undefined
+ORA-06550: line 2, column 1:
+PL/SQL: Statement ignored
+
+
+SQL> DECLARE
+    today_date date;
+begin
+    today_date:=sysdate;
+    dbms_output.put_line(today_date);
+end;  2    3    4    5    6
+  7
+  8
+  9  /
+
+PL/SQL procedure successfully completed.
+
+SQL> set serveroutput on;
+SQL> dbms_output.put_line(today_date);
+SP2-0734: unknown command beginning "dbms_outpu..." - rest of line ignored.
+SQL> DECLARE
+    today_date date;
+begin
+    today_date:=sysdate;
+    dbms_output.put_line(today_date);
+end;  2    3    4    5    6
+  7
+  8  /
+02-AUG-18
+
+PL/SQL procedure successfully completed.
+
+SQL> ACCEPT x number prompt 'Please enter a Customer Id: ';
+ACCEPT y varchar2(10) prompt 'Please Enter the Name of Scheme: ';
+DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    -- dbms_output.put_line(today_date);
+    amount:=0;
+    input_from_user_id:=&x;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for cust in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff = today_date - cust.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 then
+            amount:=5Please enter a Customer Id: *date_diff;
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        elsif date_diff > 30 then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        end if;
+    end loop;
+    end if;
+exception
+SP2-0425:     when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/"ACCEPT y varchar2(10) prompt 'Please Enter the Name of Scheme: ';" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "DECLARE" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    today_date date;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    input_from_user_id number;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    input_from_user_name varchar2(10);" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    amount number (5);" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    date_diff number(10);" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    ex_invalid_id  EXCEPTION; " is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "begin" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    today_date:=sysdate;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    -- dbms_output.put_line(today_date);" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    amount:=0;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    input_from_user_id:=&x;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    if input_from_user_id <= 0 then" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "  RAISE ex_invalid_id;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    else" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    for cust in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    loop" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "  date_diff = today_date - cust.date_of_payment;    " is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "  if date_diff > 15 and date_diff <= 30 then" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "      amount:=5*date_diff;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "      insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "      update cust_customer set status = 'P' where cust_id:=cust.id;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "  elsif date_diff > 30 then" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "      amount:=50*(date_diff-30);" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "      insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "      update cust_customer set status = 'P' where cust_id:=cust.id;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "  end if; " is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    end loop;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    end if;" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "exception" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    when no_data_found then" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "  dbms_output.put_line('No such customer!');" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "    WHEN others THEN " is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "  dbms_output.put_line('Unknown Error!');" is not a valid NUMBER
+Please enter a Customer Id: SP2-0425: "end;" is not a valid NUMBER
+Please enter a Customer Id: 1
+SP2-0425: "/1" is not a valid NUMBER
+Please enter a Customer Id: 32
+SQL> ACCEPT x number prompt 'Please enter a Customer Id: ';
+Please enter a Customer Id: ^Z^C
+
+SQL> declare
+  2  today_date date;
+  3  /
+today_date date;
+               *
+ERROR at line 2:
+ORA-06550: line 2, column 16:
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the
+following:
+begin function pragma procedure subtype type <an identifier>
+<a double-quoted delimited-identifier> current cursor delete
+exists prior
+
+
+SQL> clear
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    -- dbms_output.put_line(today_date);
+    amount:=0;
+    ACCEPT x number prompt 'Please enter a Customer Id: ';
+    input_from_user_id:=&x;
+    ACCEPT y varchar2(10) prompt 'Please Enter the Name of Scheme: ';
+    input_from_user_name:=&y;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for cust in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff = today_date - cust.date_of_payment;
+        if date_diff > 15 and date_  2  diff <= 30 then
+            amount:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        elsif date_diff >  3   30 then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        end if;
+    en  4  d loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34   35   36   37   38   39
+old  13:     input_from_user_id:=&x;
+new  13:     input_from_user_id:=        32;
+Enter value for y:
+old  15:     input_from_user_name:=&y;
+new  15:     input_from_user_name:=;
+    ACCEPT x number prompt 'Please enter a Customer Id: ';
+           *
+ERROR at line 12:
+ORA-06550: line 12, column 12:
+PLS-00103: Encountered the symbol "X" when expecting one of the following:
+:= . ( @ % ;
+
+
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount:=0;
+    input_from_user_id:=:input_from_user_id;
+    input_from_user_name:=:input_from_user_name;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for cust in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff = today_date - cust.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 and cust.cust_id=input_from_user_id then
+            amount:=5*date_diff;
+            insert into cust_fine (cust_id, cu  2  r_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        elsif date_diff > 30 and cust.cust_id=input_from_user_id then
+            amount:=50*(date_diff-30);
+             3   insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        end if;
+    end loop;
+    end if;
+exception
+    when no_data_found then
+   4         dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34   35   36
+SP2-0552: Bind variable "INPUT_FROM_USER_NAME" not declared.
+SQL> declare
+i integer;
+j integer;
+s integer;
+begin
+i:=:i;      -----observe this statement. This statement will tell the machine to take input of i through user.
+j:=:j;      -----observe this statement. This statement will tell the machine to take input of j through user.
+s:=i+j;
+dbms_output.put_line('sum of '||i||' and '||j||' is '||s);
+end;  2    3    4    5    6    7    8    9   10
+ 11
+ 12  /
+SP2-0552: Bind variable "J" not declared.
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount:=0;
+    input_from_user_id:=:input_from_user_id;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for cust in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff = today_date - cust.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 and cust.cust_id=input_from_user_id then
+            amount:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        elsif date_diff > 30 and cust.cust_id=input_from_user_id then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        end if;
+    end loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34   35
+SP2-0552: Bind variable "INPUT_FROM_USER_ID" not declared.
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount:=0;
+    input_from_user_id:=:input_from_user_id;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for cust in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff = today_date - cust.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 and cust.cust_id=input_from_user_id then
+            amount:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amou  2  nt);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        elsif date_diff > 30 and cust.cust_id=input_from_user_id then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, cust_fine)   3  values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        end if;
+    end loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+  4      WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34   35  ^C
+
+SQL> select * from cust_customer;
+
+   CUST_ID NAME                 DATE_OF_PAYMENT    NAME_OF_SC STA
+---------- -------------------- ------------------ ---------- ---
+         1 Sam K                12-JUL-18          15 Days    NP
+         2 Dev B                27-JUL-18          30 Days    P
+         3 Rajat S              19-JUL-18          15 Days    NP
+
+SQL> select * from cust_fine;
+
+no rows selected
+
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount:=0;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for cust in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff = today_date - cust.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 then
+            amount:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;
+        elsif date_diff > 30 then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (cust.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=cust.id;  2
+        end if;
+    end loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34
+        date_diff = today_date - cust.date_of_payment;
+                  *
+ERROR at line 16:
+ORA-06550: line 16, column 19:
+PLS-00103: Encountered the symbol "=" when expecting one of the following:
+:= . ( @ % ;
+ORA-06550: line 16, column 54:
+PLS-00103: Encountered the symbol ";" when expecting one of the following:
+. ( ) , * @ % & - + / at mod remainder rem <an exponent (**)>
+and or ||
+ORA-06550: line 20, column 64:
+PLS-00103: Encountered the symbol "=" when expecting one of the following:
+. ( * @ % & = - + ; < / > at in is mod remainder not rem
+return returning <an exponent (**)> <> or != or ~= >= <= <>
+and or like like2 like4 likec betwe
+ORA-06550: line 21, column 25:
+PLS-00103: Encountered the symbol ">" when expecting one of the following:
+:= . ( @ % ; not null range default character
+
+
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount:=0;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for o in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff := today_date - o.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 then
+            amount:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (o.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=o.id;
+        elsif date_diff > 30 then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (o.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id:=o.id;
+        end if;
+     2   end loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34
+            update cust_customer set status = 'P' where cust_id:=o.id;
+                                                               *
+ERROR at line 20:
+ORA-06550: line 20, column 64:
+PL/SQL: ORA-00920: invalid relational operator
+ORA-06550: line 20, column 13:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 24, column 64:
+PL/SQL: ORA-00920: invalid relational operator
+ORA-06550: line 24, column 13:
+PL/SQL: SQL Statement ignored
+
+
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount:=0;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for o in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff := today_date - o.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 then
+            amount:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (o.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id=o.id;
+        els  2  if date_diff > 30 then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (o.id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id=o.id;
+        end if;
+  3      end loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (o.id, today_date, amount);
+                                                                           *
+ERROR at line 19:
+ORA-06550: line 19, column 76:
+PLS-00302: component 'ID' must be declared
+ORA-06550: line 19, column 76:
+PL/SQL: ORA-00984: column not allowed here
+ORA-06550: line 19, column 13:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 20, column 67:
+PLS-00302: component 'ID' must be declared
+ORA-06550: line 20, column 65:
+PL/SQL: ORA-00904: "O"."ID": invalid identifier
+ORA-06550: line 20, column 13:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 23, column 76:
+PLS-00302: component 'ID' must be declared
+ORA-06550: line 23, column 76:
+PL/SQL: ORA-00984: column not allowed here
+ORA-06550: line 23, column 13:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 24, column 67:
+PLS-00302: component 'ID' must be declared
+ORA-06550: line 24, column 65:
+PL/SQL: ORA-00904: "O"."ID": invalid identifier
+ORA-06550: line 24, column 13:
+PL/SQL: SQL Statement ignored
+
+
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount:=0;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for o in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff := today_date - o.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 then
+            amount:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (o.cust_id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id=o.cust_id;
+        2    elsif date_diff > 30 then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (o.cust_id, today_date, amount);
+            update cust_customer set status = 'P' where cust_id=o.cust_id;
+        3    end if;
+    end loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34
+            insert into cust_fine (cust_id, cur_date, cust_fine) values (o.cust_id, today_date, amount);
+                                                      *
+ERROR at line 19:
+ORA-06550: line 19, column 55:
+PL/SQL: ORA-00904: "CUST_FINE": invalid identifier
+ORA-06550: line 19, column 13:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 23, column 55:
+PL/SQL: ORA-00904: "CUST_FINE": invalid identifier
+ORA-06550: line 23, column 13:
+PL/SQL: SQL Statement ignored
+
+
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount_cal number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount_cal:=0;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for o in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff := today_date - o.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 then
+            amount_cal:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, amount) values (o.cust_id, today_date, amount_cal);
+            update cust_customer set status = 'P' where cust_id=o.cust_id;
+        elsif date_diff > 30 then
+            amount:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, amount) values (o.cust_id, today_date, amount_cal);
+            update cust_customer set status = 'P' where cust_id=o.cust_id;
+        end if;
+    end loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34
+            amount:=50*(date_diff-30);
+            *
+ERROR at line 22:
+ORA-06550: line 22, column 13:
+PLS-00201: identifier 'AMOUNT' must be declared
+ORA-06550: line 22, column 13:
+PL/SQL: Statement ignored
+
+
+SQL> DECLARE
+    today_date date;
+    input_from_user_id number;
+    input_from_user_name varchar2(10);
+    amount_cal number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount_cal:=0;
+    if input_from_user_id <= 0 then
+        RAISE ex_invalid_id;
+    else
+    for o in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff := today_date - o.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 then
+            amount_cal:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, amount) values (o.cust_id, today_date, amount_cal);
+            update cust_customer set status = 'P' where cust_id=o.cus  2  t_id;
+        elsif date_diff > 30 then
+            amount_cal:=50*(date_diff-30);
+            insert into cust_fine (cust_id, cur_date, amount) values (o.cust_id, today_date, amount_cal);
+            update cust_customer set status = 'P' where cust_id  3  =o.cust_id;
+        end if;
+    end loop;
+    end if;
+exception
+    when no_data_found then
+        dbms_output.put_line('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32   33   34
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from cust_customer;
+
+   CUST_ID NAME                 DATE_OF_PAYMENT    NAME_OF_SC STA
+---------- -------------------- ------------------ ---------- ---
+         1 Sam K                12-JUL-18          15 Days    P
+         2 Dev B                27-JUL-18          30 Days    P
+         3 Rajat S              19-JUL-18          15 Days    NP
+
+SQL> select * from cust_fine;
+
+   CUST_ID CUR_DATE               AMOUNT
+---------- ------------------ ----------
+         1 02-AUG-18                 110
+
+SQL> update cust_customer set cur_date='12-JAN-2018' where cust_id=3;
+update cust_customer set cur_date='12-JAN-2018' where cust_id=3
+                         *
+ERROR at line 1:
+ORA-00904: "CUR_DATE": invalid identifier
+
+
+SQL> update cust_customer set cur_date='12-JAN-2018' where cust_id=3;
+update cust_customer set cur_date='12-JAN-2018' where cust_id=3
+                         *
+ERROR at line 1:
+ORA-00904: "CUR_DATE": invalid identifier
+
+
+SQL>
+update cust_customer set date_of_payment='12-JAN-2018' where cust_id=3;SQL>
+
+1 row updated.
+
+SQL> select * from cust_customer;
+
+   CUST_ID NAME                 DATE_OF_PAYMENT    NAME_OF_SC STA
+---------- -------------------- ------------------ ---------- ---
+         1 Sam K                12-JUL-18          15 Days    P
+         2 Dev B                27-JUL-18          30 Days    P
+         3 Rajat S              12-JAN-18          15 Days    NP
+
+SQL> DECLARE
+    today_date date;
+    amount_cal number (5);
+    date_diff number(10);
+    ex_invalid_id  EXCEPTION;
+begin
+    today_date:=sysdate;
+    amount_cal:=0;
+    for o in (select cust_id, name, date_of_payment, name_of_scheme, status from cust_customer)
+    loop
+        date_diff := today_date - o.date_of_payment;
+        if date_diff > 15 and date_diff <= 30 and o.status='NP' then
+            amount_cal:=5*date_diff;
+            insert into cust_fine (cust_id, cur_date, amount) values (o.cust_id, today_date, amount_cal);
+            update cust_customer set status = 'P' where cust_id=o.cust_id;
+        elsif date_diff > 30 and o.status='NP' then
+            amount_cal:=50*(date_diff-30);
+            insert into cust_  2  fine (cust_id, cur_date, amount) values (o.cust_id, today_date, amount_cal);
+            update cust_customer set status = 'P' where cust_id=o.cust_id;
+        end if;
+    end loop;
+exception
+    when no_data_found then
+        dbms_output.put_li  3  ne('No such customer!');
+    WHEN others THEN
+        dbms_output.put_line('Unknown Error!');
+end;
+/  4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24   25   26   27   28
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from cust_customer;
+
+   CUST_ID NAME                 DATE_OF_PAYMENT    NAME_OF_SC STA
+---------- -------------------- ------------------ ---------- ---
+         1 Sam K                12-JUL-18          15 Days    P
+         2 Dev B                27-JUL-18          30 Days    P
+         3 Rajat S              12-JAN-18          15 Days    P
+
+SQL> select * from cust_fine;
+
+   CUST_ID CUR_DATE               AMOUNT
+---------- ------------------ ----------
+         1 02-AUG-18                 110
+         3 02-AUG-18                8650
+
+SQL>

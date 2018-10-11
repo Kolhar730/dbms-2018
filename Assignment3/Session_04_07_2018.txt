@@ -1,0 +1,196 @@
+[TE1@localhost ~]$ mysql -h 10.10.12.168 -u te3166 -p 
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 29
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> show tables;
++-----------------------+
+| Tables_in_te3166db    |
++-----------------------+
+| customer_base         |
+| emp_from_csv_trial    |
+| employee_data         |
+| femaleCustomerDetails |
++-----------------------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> create table new_trial (per_id smallint primary key not null auto_increment, per_name varchar(255) not null, per_city varchar (255) not null, per_number bigint not null, per_sex varchar(10) not null);
+Query OK, 0 rows affected (0.09 sec)
+
+MySQL [te3166db]> insert into new_trial values(1, 'Sam', 'Aurangabad', 1234, 'Male');
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into new_trial values('Pom', 'Ahmedabad', 1264, 'Female');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+MySQL [te3166db]> insert into new_trial values(,'Pom', 'Ahmedabad', 1264, 'Female');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''Pom', 'Ahmedabad', 1264, 'Female')' at line 1
+MySQL [te3166db]> insert into new_trial values(2,'Pom', 'Ahmedabad', 1264, 'Female');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into new_trial values('Cam', 'Justbad', 1334, 'Male');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+MySQL [te3166db]> insert into new_trial values(3, 'Cam', 'Justbad', 1334, 'Male');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment, constraint justToShowTable bigint foreign key (per_number) references new_trial(per_number) on delete cascade);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'bigint foreign key (per_number) references new_trial(per_number) on delete casca' at line 1
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment, constraint justToShowTable bigint foreign key (per_number) references new_trial on delete cascade);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'bigint foreign key (per_number) references new_trial on delete cascade)' at line 1
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment, justToShowTable bigint foreign key (per_number) references new_trial on delete cascade);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'foreign key (per_number) references new_trial on delete cascade)' at line 1
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment, justToShowTable bigint constraint foreign key (per_number) references new_trial on delete cascade);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'constraint foreign key (per_number) references new_trial on delete cascade)' at line 1
+MySQL [te3166db]> 
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment,CONSTRAINT justToShowTable bigint foreign key (per_number) references new_trial(per_number) on delete cascade);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'bigint foreign key (per_number) references new_trial(per_number) on delete casca' at line 1
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment,foreign key(cust_number) references new_trial(per_number) on delete cascade);
+ERROR 1072 (42000): Key column 'cust_number' doesn't exist in table
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment,foreign key(per_number) references new_trial(per_number) on delete cascade);
+ERROR 1072 (42000): Key column 'per_number' doesn't exist in table
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment,per_number bigint not null,foreign key(per_number) references new_trial(per_number) on delete cascade);
+ERROR 1005 (HY000): Can't create table 'te3166db.new_trial_2' (errno: 150)
+MySQL [te3166db]> create table new_trial_2 (order_number smallint primary key not null auto_increment,pers_number bigint not null,foreign key(pers_number) references new_trial(per_number) on delete cascade);
+ERROR 1005 (HY000): Can't create table 'te3166db.new_trial_2' (errno: 150)
+MySQL [te3166db]> create table newTable (order_number smallint primary key not null auto_increment,pers_number bigint not null,foreign key(pers_number) references new_trial(per_number) on delete cascade);
+ERROR 1005 (HY000): Can't create table 'te3166db.newTable' (errno: 150)
+MySQL [te3166db]> create table newTable (order_number smallint primary key not null auto_increment,pers_number bigint not null,foreign key(pers_number) references new_trial(per_number) on delete cascade);
+ERROR 1005 (HY000): Can't create table 'te3166db.newTable' (errno: 150)
+MySQL [te3166db]> create table newTable (order_number smallint primary key not null auto_increment,pers_number bigint not null,constraint foreign key(pers_number) references new_trial(per_number) on delete cascade);
+ERROR 1005 (HY000): Can't create table 'te3166db.newTable' (errno: 150)
+MySQL [te3166db]> create table newTable (order_number smallint primary key not null auto_increment,pers_number bigint not null,constraint temp_id foreign key(pers_number) references new_trial(per_number) on delete cascade);
+ERROR 1005 (HY000): Can't create table 'te3166db.newTable' (errno: 150)
+MySQL [te3166db]> 
+MySQL [te3166db]> 
+MySQL [te3166db]> CREATE TABLE products
+    -> ( product_id INT PRIMARY KEY,
+    ->   product_name VARCHAR(50) NOT NULL,
+    ->   category VARCHAR(25)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+MySQL [te3166db]> CREATE TABLE inventory
+    -> ( inventory_id INT PRIMARY KEY,
+    ->   product_id INT NOT NULL,
+    ->   quantity INT,
+    ->   min_level INT,
+    ->   max_level INT,
+    ->   CONSTRAINT fk_inv_product_id
+    ->     FOREIGN KEY (product_id)
+    ->     REFERENCES products (product_id)
+    ->     ON DELETE CASCADE
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+MySQL [te3166db]> show tables
+    -> ;
++-----------------------+
+| Tables_in_te3166db    |
++-----------------------+
+| customer_base         |
+| emp_from_csv_trial    |
+| employee_data         |
+| femaleCustomerDetails |
+| inventory             |
+| new_trial             |
+| products              |
++-----------------------+
+7 rows in set (0.00 sec)
+
+MySQL [te3166db]> create table newTable (order_number smallint primary key not null auto_increment,pers_number bigint not null,constraint temp_id foreign key(per_number) references new_trial(per_number) on delete cascade);
+ERROR 1072 (42000): Key column 'per_number' doesn't exist in table
+MySQL [te3166db]> create table newTable (order_number smallint primary key not null auto_increment,pers_number bigint not null,constraint temp_id foreign key(pers_number) references new_trial(per_number) on delete cascade);
+ERROR 1005 (HY000): Can't create table 'te3166db.newTable' (errno: 150)
+MySQL [te3166db]> create table newTable (order_number smallint primary key not null auto_increment,pers_number bigint not null,constraint temp_id foreign key(pers_number) references new_trial(per_number));
+ERROR 1005 (HY000): Can't create table 'te3166db.newTable' (errno: 150)
+MySQL [te3166db]> create table newTable (order_number smallint primary key not null auto_increment,pers_number bigint not null,constraint temp_id foreign key(pers_number) references new_trial(per_number) on delete cascade);
+ERROR 1005 (HY000): Can't create table 'te3166db.newTable' (errno: 150)
+MySQL [te3166db]> insert into products values (1, 'Tomato', 'Vegetable');
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into products values (2, 'Potato', 'Vegetable');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into products values (3, 'Apple', 'Fruit');
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> insert into products values (4, 'Kiwi', 'Fruit');
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into inventory values (1,1, 20,2,18);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> insert into inventory values (1,2, 10,1,12);
+ERROR 1062 (23000): Duplicate entry '1' for key 'PRIMARY'
+MySQL [te3166db]> insert into inventory values (2,2, 10,1,12);
+Query OK, 1 row affected (0.06 sec)
+
+MySQL [te3166db]> insert into inventory values (2,1, 10,1,12);
+ERROR 1062 (23000): Duplicate entry '2' for key 'PRIMARY'
+MySQL [te3166db]> insert into inventory values (3,1, 10,1,12);
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [te3166db]> insert into inventory values (4,3, 3,2,1);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [te3166db]> select * from products;
++------------+--------------+-----------+
+| product_id | product_name | category  |
++------------+--------------+-----------+
+|          1 | Tomato       | Vegetable |
+|          2 | Potato       | Vegetable |
+|          3 | Apple        | Fruit     |
+|          4 | Kiwi         | Fruit     |
++------------+--------------+-----------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from inventory;
++--------------+------------+----------+-----------+-----------+
+| inventory_id | product_id | quantity | min_level | max_level |
++--------------+------------+----------+-----------+-----------+
+|            1 |          1 |       20 |         2 |        18 |
+|            2 |          2 |       10 |         1 |        12 |
+|            3 |          1 |       10 |         1 |        12 |
+|            4 |          3 |        3 |         2 |         1 |
++--------------+------------+----------+-----------+-----------+
+4 rows in set (0.00 sec)
+
+MySQL [te3166db]> delete * from products where id=1;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '* from products where id=1' at line 1
+MySQL [te3166db]> delete from products where id=1;
+ERROR 1054 (42S22): Unknown column 'id' in 'where clause'
+MySQL [te3166db]> delete from products where product_id=1;
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [te3166db]> select * from products;
++------------+--------------+-----------+
+| product_id | product_name | category  |
++------------+--------------+-----------+
+|          2 | Potato       | Vegetable |
+|          3 | Apple        | Fruit     |
+|          4 | Kiwi         | Fruit     |
++------------+--------------+-----------+
+3 rows in set (0.00 sec)
+
+MySQL [te3166db]> select * from inventory;
++--------------+------------+----------+-----------+-----------+
+| inventory_id | product_id | quantity | min_level | max_level |
++--------------+------------+----------+-----------+-----------+
+|            2 |          2 |       10 |         1 |        12 |
+|            4 |          3 |        3 |         2 |         1 |
++--------------+------------+----------+-----------+-----------+
+2 rows in set (0.00 sec)
+
+MySQL [te3166db]> Ctrl-C -- exit!
+Aborted
+[TE1@localhost ~]$ 
+

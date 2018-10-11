@@ -1,0 +1,170 @@
+[TE1@localhost ~]$ mysql -h 10.10.14.2 -u te3166 -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 26
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use te3166db;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MySQL [te3166db]> select * from Student;
+Empty set (0.00 sec)
+
+MySQL [te3166db]> insert into Student values ('19/07/2014', 'COMP', 67, 'A', 'Arthur Melo');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+MySQL [te3166db]> insert into Student values ('19/07/2014', 'COMP', 67, 'A');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+MySQL [te3166db]> insert into Student values ('Arthur Melo','19/07/2014', 'COMP', 67, 'A');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+MySQL [te3166db]> create table Student2 (rollNumber int not null primary key auto_increment=100, name varchar(30) not null, 
+    -> date_of_admission date not null, branch varchar(6) not null, percentage int not null, status varchar(1));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '=100, name varchar(30) not null, 
+date_of_admission date not null, branch varcha' at line 1
+MySQL [te3166db]> create table Student2 (rollNumber int not null primary key auto_increment=100, name varchar(30) not null,date_of_admission date not null, branch varchar(6) not null, percentage int not null, status varchar(1));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '=100, name varchar(30) not null,date_of_admission date not null, branch varchar(' at line 1
+MySQL [te3166db]> create table Student2 (rollNumber int not null primary key auto_increment, name varchar(30) not null,date_of_admission date not null, branch varchar(6) not null, percentage int not null, status varchar(1))auto_increment=100;
+Query OK, 0 rows affected (0.10 sec)
+
+MySQL [te3166db]> create table Alumni2 like Student2;
+Query OK, 0 rows affected (0.09 sec)
+
+MySQL [te3166db]> insert into Student2 values("Sam K", '19-07-2015', "COMP", 67, "P");
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+MySQL [te3166db]> insert into Student2 values(100,"Sam K", '19-07-2015', "COMP", 67, "P");
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+MySQL [te3166db]> select * from Student2;
++------------+-------+-------------------+--------+------------+--------+
+| rollNumber | name  | date_of_admission | branch | percentage | status |
++------------+-------+-------------------+--------+------------+--------+
+|        100 | Sam K | 0000-00-00        | COMP   |         67 | P      |
++------------+-------+-------------------+--------+------------+--------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> update Student2 set date_of_admission='2015-07-19' where rollNumber=100;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> select * from Student2;
++------------+-------+-------------------+--------+------------+--------+
+| rollNumber | name  | date_of_admission | branch | percentage | status |
++------------+-------+-------------------+--------+------------+--------+
+|        100 | Sam K | 2015-07-19        | COMP   |         67 | P      |
++------------+-------+-------------------+--------+------------+--------+
+1 row in set (0.00 sec)
+
+MySQL [te3166db]> insert into Student2 values("Robert", '19-04-2005', "COMP", 72, "A");
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+MySQL [te3166db]> insert into Student2 values(101,"Robert", '19-04-2005', "COMP", 72, "A");
+Query OK, 1 row affected, 1 warning (0.04 sec)
+
+MySQL [te3166db]> insert into Student2 values(102,"Sagar", '12-04-2009', "IT", 72, "A");
+Query OK, 1 row affected, 1 warning (0.06 sec)
+
+MySQL [te3166db]> insert into Student2 values(102,"Alice", '12-04-2017', "EnTC", 62, "P");
+ERROR 1062 (23000): Duplicate entry '102' for key 'PRIMARY'
+MySQL [te3166db]> insert into Student2 values(103,"Alice", '12-04-2017', "EnTC", 62, "P");
+Query OK, 1 row affected, 1 warning (0.04 sec)
+
+MySQL [te3166db]> insert into Student2 values(104,"James Bond", '12-04-2017', "EnTC", 69, "A");
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+MySQL [te3166db]> insert into Student2 values(105,"Sherlock Holmes", '13-04-2017', "COMP", 79, "P");
+Query OK, 1 row affected, 1 warning (0.06 sec)
+
+MySQL [te3166db]> update Student2 set date_of_admission='2005-07-19' where rollNumber=104;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> select * from Student2;
++------------+-----------------+-------------------+--------+------------+--------+
+| rollNumber | name            | date_of_admission | branch | percentage | status |
++------------+-----------------+-------------------+--------+------------+--------+
+|        100 | Sam K           | 2015-07-19        | COMP   |         67 | P      |
+|        101 | Robert          | 0000-00-00        | COMP   |         72 | A      |
+|        102 | Sagar           | 0000-00-00        | IT     |         72 | A      |
+|        103 | Alice           | 0000-00-00        | EnTC   |         62 | P      |
+|        104 | James Bond      | 2005-07-19        | EnTC   |         69 | A      |
+|        105 | Sherlock Holmes | 0000-00-00        | COMP   |         79 | P      |
++------------+-----------------+-------------------+--------+------------+--------+
+6 rows in set (0.00 sec)
+
+MySQL [te3166db]> update Student2 set date_of_admission='2015-09-19' where rollNumber=101;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update Student2 set date_of_admission='2015-04-21' where rollNumber=102;
+Query OK, 1 row affected (0.06 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update Student2 set date_of_admission='2013-07-22' where rollNumber=103;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update Student2 set date_of_admission='2017-09-02' where rollNumber=104;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> update Student2 set date_of_admission='2017-10-02' where rollNumber=105;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [te3166db]> select * from Student2;
++------------+-----------------+-------------------+--------+------------+--------+
+| rollNumber | name            | date_of_admission | branch | percentage | status |
++------------+-----------------+-------------------+--------+------------+--------+
+|        100 | Sam K           | 2015-07-19        | COMP   |         67 | P      |
+|        101 | Robert          | 2015-09-19        | COMP   |         72 | A      |
+|        102 | Sagar           | 2015-04-21        | IT     |         72 | A      |
+|        103 | Alice           | 2013-07-22        | EnTC   |         62 | P      |
+|        104 | James Bond      | 2017-09-02        | EnTC   |         69 | A      |
+|        105 | Sherlock Holmes | 2017-10-02        | COMP   |         79 | P      |
++------------+-----------------+-------------------+--------+------------+--------+
+6 rows in set (0.00 sec)
+
+MySQL [te3166db]> delimiter //
+MySQL [te3166db]> create or replace trigger onUpdate update on Student2
+    -> begin
+    -> 
+Display all 934 possibilities? (y or n)
+    -> insert into Alumni2
+    -> select * from Student2 where status='A';
+    -> delete from Student2 where status='A';
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'trigger onUpdate update on Student2
+begin
+insert into Alumni2
+select * from Stud' at line 1
+MySQL [te3166db]> create or replace trigger onUpdate update on Student2 begin insert into Alumni2 select * from Student2 where status='A'; delete from Student2 where status='A'; end;//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'trigger onUpdate update on Student2 begin insert into Alumni2 select * from Stud' at line 1
+MySQL [te3166db]> create or replace trigger onUpdate on update Student2
+    -> begin
+    -> insert into Alumni2
+    -> select * from Student2 where status="A
+    "> ";
+    -> delete from Student2 where status="A";
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'trigger onUpdate on update Student2
+begin
+insert into Alumni2
+select * from Stud' at line 1
+MySQL [te3166db]> create or replace trigger onUpdate on update Student2
+    -> begin
+    -> select * from Student2 where status="A";
+    -> delete from Student2 where status="A";
+    -> end;
+    -> //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'trigger onUpdate on update Student2
+begin
+select * from Student2 where status="A' at line 1
+MySQL [te3166db]> delimiter ;
+MySQL [te3166db]> 
+

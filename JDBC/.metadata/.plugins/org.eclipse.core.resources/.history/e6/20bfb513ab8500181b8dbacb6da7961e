@@ -1,0 +1,21 @@
+import java.sql.*;
+import java.util.*;
+import com.oracle.*;
+
+class trialJDBC
+{
+    public static void main(String a[])
+    {
+        Connection connect = null;
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+        
+        
+        
+        String url = "jdbc:oracle:10.10.12.76/te3166db";
+        String user = "te3166";
+        String pass = "te3166";
+ 
+        
+       
+    }
+}
